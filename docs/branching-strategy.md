@@ -2,7 +2,7 @@
 
 本ドキュメントは、Git-flow に準拠したブランチ戦略を定めたものです。
 
-> **step-by-step 手順については [運用手順書（Runbook）](./runbook.md) を参照してください。**
+> **step-by-step 手順については [ブランチ・デプロイ運用手順書](./branching-and-deployment-runbook.md) を参照してください。**
 
 ## 目次
 
@@ -72,7 +72,7 @@ vX.Y.Z
 
 > **重要**: 機能開発（`feat:` プレフィックスを持つコミット）は `feature` ブランチで行い、PR を通じて `develop` ブランチにマージする必要があります。`master` や `release` ブランチに直接 feature コミットをプッシュしないでください。
 
-📘 **手順の詳細**: [Runbook - 新機能を開発する](./runbook.md#新機能を開発する)
+📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - 新機能を開発する](./branching-and-deployment-runbook.md#新機能を開発する)
 
 ---
 
@@ -97,7 +97,7 @@ vX.Y.Z
   - リリースに必要な設定変更
 - 新機能は次のリリースサイクルで `develop` ブランチから開発を継続
 
-📘 **手順の詳細**: [Runbook - リリースブランチを作成する](./runbook.md#リリースブランチを作成する)
+📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - リリースブランチを作成する](./branching-and-deployment-runbook.md#リリースブランチを作成する)
 
 ---
 
@@ -113,7 +113,7 @@ vX.Y.Z
 - レビューを受け、承認後にマージ
 - Hot-fix は `master` へのマージ後、`develop` にも反映する必要がある
 
-📘 **手順の詳細**: [Runbook - Hot-fix を適用する](./runbook.md#hot-fix-を適用する)
+📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - Hot-fix を適用する](./branching-and-deployment-runbook.md#hot-fix-を適用する)
 
 ---
 
@@ -136,7 +136,7 @@ vX.Y.Z
 - 既存の release ブランチに対してバグ修正のみを適用
 - 機能追加は禁止
 
-📘 **手順の詳細**: [Runbook - リリース後のバグ修正（非 Hot-fix）](./runbook.md#リリース後のバグ修正非-hot-fix)
+📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - リリース後のバグ修正（非 Hot-fix）](./branching-and-deployment-runbook.md#リリース後のバグ修正非-hot-fix)
 
 #### 現在の release ブランチに関係しない修正の場合
 
@@ -146,7 +146,7 @@ Feature-Freeze 期間中であっても、`develop` ブランチに対して修�
 - 修正を実施し、`develop` ブランチに対する PR を作成
 - 修正は次回のリリースに含まれる
 
-📘 **手順の詳細**: [Runbook - develop ブランチでのバグ修正](./runbook.md#develop-ブランチでのバグ修正)
+📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - develop ブランチでのバグ修正](./branching-and-deployment-runbook.md#develop-ブランチでのバグ修正)
 
 ---
 
@@ -169,4 +169,4 @@ Feature-Freeze 期間中であっても、`develop` ブランチに対して修�
 ## 関連ドキュメント
 
 - [デプロイ戦略](./deployment-strategy.md)
-- [運用手順書（Runbook）](./runbook.md)
+- [ブランチ・デプロイ運用手順書](./branching-and-deployment-runbook.md)

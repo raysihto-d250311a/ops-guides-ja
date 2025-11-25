@@ -8,7 +8,7 @@ This repository contains operations guides for development teams.
 |----------|-------------|
 | [Branching Strategy](./docs/branching-strategy.md) | Git-flow compliant branching rules |
 | [Deployment Strategy](./docs/deployment-strategy.md) | Environment configuration and deployment/distribution rules |
-| [Runbook](./docs/runbook.md) | Step-by-step procedures for common scenarios |
+| [Branching and Deployment Runbook](./docs/branching-and-deployment-runbook.md) | Step-by-step procedures for branching and deployment scenarios |
 
 ## Overview
 
@@ -28,9 +28,9 @@ This repository manages operations guides for development teams.
 - `vX.Y.Z` tag → PRD environment (exists only on master)
 - Mobile app distribution and review process flow
 
-### Runbook
+### Branching and Deployment Runbook
 
-Step-by-step procedures for common operational scenarios:
+Step-by-step procedures for branching and deployment scenarios:
 
 - Feature development
 - Release branch creation
