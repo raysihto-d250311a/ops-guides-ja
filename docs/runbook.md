@@ -30,9 +30,8 @@
 #### Step 1: feature ブランチを作成
 
 ```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/your-feature-name
+git fetch origin develop
+git checkout -B feature/your-feature-name origin/develop
 ```
 
 #### Step 2: 機能を実装
@@ -75,15 +74,14 @@ git push origin feature/your-feature-name
 #### Step 1: develop ブランチを最新化
 
 ```bash
-git checkout develop
-git pull origin develop
+git fetch origin develop
 ```
 
 #### Step 2: リリースブランチを作成
 
 ```bash
 # 例: v1.2.0 のリリースを準備する場合
-git checkout -b release/v1.2.0
+git checkout -B release/v1.2.0 origin/develop
 ```
 
 #### Step 3: リモートへプッシュ
@@ -115,8 +113,8 @@ RC タグはリリースプロセスにおいて複数回作成されます。�
 #### Step 1: release ブランチをチェックアウト
 
 ```bash
-git checkout release/v1.2.0
-git pull origin release/v1.2.0
+git fetch origin release/v1.2.0
+git checkout -B release/v1.2.0 origin/release/v1.2.0
 ```
 
 #### Step 2: RC タグを作成
@@ -177,18 +175,17 @@ bundle exec fastlane deploy_internal
 
 ### 手順
 
-#### Step 1: master ブランチをチェックアウト
+#### Step 1: release ブランチから master への PR を作成
+
+1. GitHub で `master` ブランチに対する PR を作成（ソースブランチ: `release/v1.2.0`）
+2. レビュアーを設定
+3. レビュー承認後、マージ
+
+#### Step 2: master ブランチをチェックアウト
 
 ```bash
-git checkout master
-git pull origin master
-```
-
-#### Step 2: release ブランチをマージ
-
-```bash
-git merge release/v1.2.0
-git push origin master
+git fetch origin master
+git checkout -B master origin/master
 ```
 
 #### Step 3: master 上で RC タグを作成して STG で最終確認
@@ -245,12 +242,13 @@ bundle exec fastlane release
 
 #### Step 7: develop ブランチへの反映
 
-```bash
-git checkout develop
-git pull origin develop
-git merge master
-git push origin develop
-```
+release ブランチを develop にマージするための PR を作成します。
+
+1. GitHub で `develop` ブランチに対する PR を作成（ソースブランチ: `release/v1.2.0`）
+2. レビュアーを設定
+3. レビュー承認後、マージ
+
+> **注意**: develop に master をマージするのではなく、release ブランチを develop にマージします。
 
 #### Step 8: リリースブランチの削除（オプション）
 
@@ -275,9 +273,8 @@ git push origin --delete release/v1.2.0
 #### Step 1: hotfix ブランチを作成
 
 ```bash
-git checkout master
-git pull origin master
-git checkout -b hotfix/fix-critical-issue
+git fetch origin master
+git checkout -B hotfix/fix-critical-issue origin/master
 ```
 
 #### Step 2: 修正を実施
@@ -310,8 +307,8 @@ git push origin v1.2.1-rc.1
 #### Step 6: master 上で RC タグを作成して最終確認
 
 ```bash
-git checkout master
-git pull origin master
+git fetch origin master
+git checkout -B master origin/master
 git tag v1.2.1-rc.2  # hotfix での最後の RC からインクリメント
 git push origin v1.2.1-rc.2
 ```
@@ -331,12 +328,13 @@ git push origin v1.2.1
 
 #### Step 9: develop へ反映
 
-```bash
-git checkout develop
-git pull origin develop
-git merge master
-git push origin develop
-```
+hotfix ブランチを develop にマージするための PR を作成します。
+
+1. GitHub で `develop` ブランチに対する PR を作成（ソースブランチ: `hotfix/fix-critical-issue`）
+2. レビュアーを設定
+3. レビュー承認後、マージ
+
+> **注意**: develop に master をマージするのではなく、hotfix ブランチを develop にマージします。
 
 ---
 
@@ -358,9 +356,8 @@ git push origin develop
 #### Step 2: master ブランチ上で Hot-fix 相当の修正を実施
 
 ```bash
-git checkout master
-git pull origin master
-git checkout -b hotfix/fix-review-rejection
+git fetch origin master
+git checkout -B hotfix/fix-review-rejection origin/master
 ```
 
 修正を実施します：
@@ -381,8 +378,8 @@ git push origin hotfix/fix-review-rejection
 > **重要**: 審査に提出するのは常に `master` ブランチ上の RC タグ (`vX.Y.Z-rc.N`) からビルドしたアプリです。
 
 ```bash
-git checkout master
-git pull origin master
+git fetch origin master
+git checkout -B master origin/master
 git tag v1.2.0-rc.4
 git push origin v1.2.0-rc.4
 ```
@@ -412,12 +409,13 @@ git push origin v1.2.0
 
 #### Step 8: develop へ反映
 
-```bash
-git checkout develop
-git pull origin develop
-git merge master
-git push origin develop
-```
+hotfix ブランチを develop にマージするための PR を作成します。
+
+1. GitHub で `develop` ブランチに対する PR を作成（ソースブランチ: `hotfix/fix-review-rejection`）
+2. レビュアーを設定
+3. レビュー承認後、マージ
+
+> **注意**: develop に master をマージするのではなく、hotfix ブランチを develop にマージします。
 
 ---
 
@@ -432,12 +430,11 @@ git push origin develop
 
 ### 手順
 
-#### Step 1: 現在のリリースブランチから bugfix ブランチを作成
+#### Step 1: 現在のリリースブランチから fix ブランチを作成
 
 ```bash
-git checkout release/v1.2.0
-git pull origin release/v1.2.0
-git checkout -b bugfix/fix-minor-issue
+git fetch origin release/v1.2.0
+git checkout -B fix/fix-minor-issue origin/release/v1.2.0
 ```
 
 #### Step 2: 修正を実施
@@ -450,7 +447,7 @@ git commit -m "fix: fix minor bug"
 #### Step 3: リモートへプッシュ
 
 ```bash
-git push origin bugfix/fix-minor-issue
+git push origin fix/fix-minor-issue
 ```
 
 #### Step 4: release ブランチに対する PR を作成
@@ -461,8 +458,8 @@ git push origin bugfix/fix-minor-issue
 #### Step 5: 新しい RC タグを作成
 
 ```bash
-git checkout release/v1.2.0
-git pull origin release/v1.2.0
+git fetch origin release/v1.2.0
+git checkout -B release/v1.2.0 origin/release/v1.2.0
 git tag v1.2.0-rc.3  # 前回の RC からインクリメント
 git push origin v1.2.0-rc.3
 ```
@@ -489,11 +486,10 @@ git push origin v1.2.0-rc.3
 #### Step 1: fix または chore ブランチを作成
 
 ```bash
-git checkout develop
-git pull origin develop
-git checkout -b fix/your-bug-fix-name
+git fetch origin develop
+git checkout -B fix/your-bug-fix-name origin/develop
 # または
-git checkout -b chore/your-chore-name
+git checkout -B chore/your-chore-name origin/develop
 ```
 
 #### Step 2: 修正を実施
