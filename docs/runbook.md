@@ -40,7 +40,7 @@ git checkout -b feature/your-feature-name
 # ...
 
 git add .
-git commit -m "feat: 機能の説明"
+git commit -m "feat: add user feature"
 ```
 
 > **注意**: `feat:` プレフィックスを持つコミットは `feature` ブランチで行い、`develop` にマージしてください。
@@ -259,7 +259,7 @@ git checkout -b hotfix/fix-critical-issue
 
 ```bash
 git add .
-git commit -m "fix: 緊急修正の説明"
+git commit -m "fix: fix critical issue"
 ```
 
 #### Step 3: RC タグを作成して STG で確認
@@ -329,7 +329,7 @@ git pull origin release/v1.2.0
 
 # 修正を実施
 git add .
-git commit -m "fix: 審査リジェクト対応 - 〇〇を修正"
+git commit -m "fix: address app store review rejection"
 git push origin release/v1.2.0
 ```
 
@@ -381,7 +381,7 @@ git checkout -b bugfix/fix-minor-issue
 
 ```bash
 git add .
-git commit -m "fix: 軽微なバグ修正"
+git commit -m "fix: fix minor bug"
 ```
 
 #### Step 3: リモートへプッシュ
