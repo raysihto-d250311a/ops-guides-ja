@@ -1,44 +1,44 @@
 # ops-guides-ja
 
-運用手順書のリポジトリーです。
+This repository contains operations guides for development teams.
 
-## ドキュメント一覧
+## Documents
 
-| ドキュメント | 説明 |
-|-------------|------|
-| [ブランチ戦略](./docs/branching-strategy.md) | Git-flow に準拠したブランチ運用ルール |
-| [デプロイ戦略](./docs/deployment-strategy.md) | 環境構成とデプロイ・配布のルール |
-| [運用手順書（Runbook）](./docs/runbook.md) | 代表的シナリオの step-by-step 手順 |
+| Document | Description |
+|----------|-------------|
+| [Branching Strategy](./docs/branching-strategy.md) | Git-flow compliant branching rules |
+| [Deployment Strategy](./docs/deployment-strategy.md) | Environment configuration and deployment/distribution rules |
+| [Runbook](./docs/runbook.md) | Step-by-step procedures for common scenarios |
 
-## 概要
+## Overview
 
-本リポジトリーは、開発チームのための運用手順書を管理しています。
+This repository manages operations guides for development teams.
 
-### ブランチ戦略
+### Branching Strategy
 
-- Git-flow に準拠したブランチ構成
-- Semantic Versioning (Sem-Ver) に基づくバージョン管理
-- Feature-freeze、Hot-fix、非 Hot-fix 修正の運用ルール
-- PR とレビューの原則
+- Git-flow compliant branch structure
+- Semantic Versioning (Sem-Ver) based version management
+- Feature-freeze, Hot-fix, and non-Hot-fix operations rules
+- PR and review principles
 
-### デプロイ戦略
+### Deployment Strategy
 
-- `develop` ブランチ → DEV 環境（自動/半自動/手動）
-- `vX.Y.Z-rc.N` タグ → STG 環境（release/hotfix/master 上にタグ付け可能）
-- `vX.Y.Z` タグ → PRD 環境（master 上にのみ存在）
-- モバイルアプリの配布（distribute）と審査対応フロー
+- `develop` branch → DEV environment (auto/semi-auto/manual)
+- `vX.Y.Z-rc.N` tag → STG environment (can be tagged on release/hotfix/master)
+- `vX.Y.Z` tag → PRD environment (exists only on master)
+- Mobile app distribution and review process flow
 
-### 運用手順書（Runbook）
+### Runbook
 
-代表的な運用シナリオごとの step-by-step 手順を記載しています。
+Step-by-step procedures for common operational scenarios:
 
-- 新機能開発
-- リリースブランチ作成
-- RC タグ作成と STG デプロイ
-- 本番リリース
-- Hot-fix 適用
-- 審査リジェクト対応
-- リリース後のバグ修正
+- Feature development
+- Release branch creation
+- RC tag creation and STG deployment
+- Production release
+- Hot-fix application
+- Review rejection handling
+- Post-release bug fixes
 
 ## Contributing
 

@@ -25,6 +25,8 @@ Git-flow に準拠し、以下のブランチを使用します。
 | メインブランチ | `master` | 本番リリース用。vX.Y.Z タグはこのブランチ上にのみ存在する |
 | 開発ブランチ | `develop` | 次期リリースの開発用。すべての feature コミットはここにマージされる |
 | 機能ブランチ | `feature/*` | 新機能開発用 |
+| 修正ブランチ | `fix/*` | バグ修正用（軽微な修正を含む） |
+| 雑務ブランチ | `chore/*` | ドキュメント更新、依存関係更新など機能変更を伴わない作業用 |
 | リリースブランチ | `release/vX.Y.Z` | リリース準備用 |
 | Hot-fix ブランチ | `hotfix/*` | 緊急修正用 |
 
@@ -48,6 +50,10 @@ vX.Y.Z
 
 - `feature/add-user-authentication`
 - `feature/improve-performance`
+- `fix/resolve-login-error`
+- `fix/correct-calculation-logic`
+- `chore/update-dependencies`
+- `chore/update-documentation`
 - `release/v1.2.0`
 - `release/v2.0.0`
 - `hotfix/fix-critical-security-issue`
@@ -120,13 +126,27 @@ vX.Y.Z
 
 ### 運用方法
 
-非 Hot-fix 修正は、現在の `release` ブランチ（例: `release/v1.2.0`）で Feature-Freeze 中に対応します。
+非 Hot-fix 修正は、Feature-Freeze 状態かどうかによって対応方法が異なります。
+
+#### Feature-Freeze 期間中の場合
+
+現在の `release` ブランチ（例: `release/v1.2.0`）で対応します。
 
 - 既存の release ブランチに対してバグ修正のみを適用
 - 機能追加は禁止
 - 修正後、新しいパッチバージョン（例: v1.2.1）としてリリース
 
 📘 **手順の詳細**: [Runbook - リリース後のバグ修正（非 Hot-fix）](./runbook.md#リリース後のバグ修正非-hot-fix)
+
+#### Feature-Freeze 期間外の場合
+
+`develop` ブランチに対して修正を行います。
+
+- `fix/*` または `chore/*` ブランチを `develop` から作成
+- 修正を実施し、`develop` ブランチに対する PR を作成
+- 修正は次回のリリースに含まれる
+
+📘 **手順の詳細**: [Runbook - develop ブランチでのバグ修正](./runbook.md#develop-ブランチでのバグ修正)
 
 ---
 
@@ -142,26 +162,7 @@ vX.Y.Z
    - 直接のブランチへの push は禁止
    - 緊急時でも PR 経由でマージする
 
-2. **適切なレビュアーを設定する**
-   - 最低 1 名以上のレビューを必須とする
-   - コードオーナーが設定されている場合は自動的にレビュアーに追加
-
-3. **PR テンプレートに従う**
-   - 変更内容の説明
-   - テスト方法
-   - 影響範囲
-
-4. **CI/CD チェックをパスしてからマージ**
-   - 自動テストがすべてパスしていること
-   - リンターチェックがパスしていること
-
-### レビューの観点
-
-- コードの品質と可読性
-- セキュリティー上の問題がないか
-- パフォーマンスへの影響
-- テストの網羅性
-- ドキュメントの更新が必要か
+その他のルール（レビュアーの設定、CI/CD チェック、テンプレートなど）については、プロジェクトのポリシーに従ってください。
 
 ---
 
