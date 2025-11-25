@@ -193,6 +193,8 @@ bundle exec fastlane deploy_internal
 
 ### コミットグラフ
 
+以下は、release ブランチ上で RC タグを作成し、修正後に新しい RC タグを作成するフローの例です。
+
 ```mermaid
 gitGraph
     commit id: "A"
@@ -303,6 +305,8 @@ git push origin --delete release/v1.2.0
 
 ### コミットグラフ
 
+以下は、release ブランチで複数回の修正と RC タグ作成を経て、master へマージし本番リリースする完全なフローの例です。
+
 ```mermaid
 gitGraph
     commit id: "A"
@@ -321,6 +325,8 @@ gitGraph
     checkout develop
     merge release/v1.2.0 id: "H (develop へ反映)"
 ```
+
+> **注**: 上記の例では、release ブランチ上で複数回の RC タグ（rc.1 〜 rc.4）が作成され、その後 master へマージされています。実際の RC 番号は、修正回数に応じてインクリメントされます。
 
 ---
 
