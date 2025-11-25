@@ -206,8 +206,7 @@ flowchart TB
     merge_master --> rc_master["[vX.Y.Z-rc.N] タグ\n(master 上)"]
     rc_master --> STG_DIST
     rc_master -->|動作確認 OK| review_submit["[vX.Y.Z-rc.N] タグ\n(master 上)"]
-    review_submit --> REVIEW
-    review_submit -.->|審査に提出したビルドが\nそのままストアリリースされる| REVIEW
+    review_submit -->|審査提出| REVIEW
     review_submit -->|審査パス後| tag_release["[vX.Y.Z] タグ\n(master 上)"]
     tag_release -.->|タグのみ作成\nビルド・配布は行わない| tag_only["バージョン管理用"]
 ```
