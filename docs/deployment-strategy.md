@@ -155,51 +155,61 @@ vX.Y.Z
 
 ### Web アプリケーション
 
-```
-[develop] ──────────────────────────────→ DEV 環境
-    │
-    ↓ feature 開発完了
-[release/vX.Y.Z] 作成
-    │
-    ↓
-[vX.Y.Z-rc.N] タグ (release 上) ────────→ STG 環境 (動作確認)
-    │
-    ↓ 修正があれば release ブランチを更新し、新しい RC タグを作成
-    │
-    ↓ 動作確認 OK
-[master] へマージ
-    │
-    ↓
-[vX.Y.Z-rc.N] タグ (master 上) ─────────→ STG 環境 (最終確認)
-    │
-    ↓ 動作確認 OK
-[vX.Y.Z] タグ (master 上) ──────────────→ PRD 環境
+```mermaid
+flowchart TB
+    subgraph DEV["DEV 環境"]
+        DEV_ENV["DEV 環境"]
+    end
+
+    subgraph STG["STG 環境"]
+        STG_ENV["STG 環境"]
+    end
+
+    subgraph PRD["PRD 環境"]
+        PRD_ENV["PRD 環境"]
+    end
+
+    develop["[develop]"] --> DEV_ENV
+    develop -->|feature 開発完了| release["[release/vX.Y.Z] 作成"]
+    release --> rc_release["[vX.Y.Z-rc.N] タグ\n(release 上)"]
+    rc_release --> STG_ENV
+    rc_release -->|修正があれば release ブランチを更新し\n新しい RC タグを作成| rc_release
+    rc_release -->|動作確認 OK| merge_master["[master] へマージ"]
+    merge_master --> rc_master["[vX.Y.Z-rc.N] タグ\n(master 上)"]
+    rc_master --> STG_ENV
+    rc_master -->|動作確認 OK| tag_release["[vX.Y.Z] タグ\n(master 上)"]
+    tag_release --> PRD_ENV
 ```
 
 ### モバイルアプリ
 
-```
-[develop] ──────────────────────────────→ DEV 配布
-    │
-    ↓ feature 開発完了
-[release/vX.Y.Z] 作成
-    │
-    ↓
-[vX.Y.Z-rc.N] タグ (release 上) ────────→ STG 配布 (動作確認)
-    │
-    ↓ 修正があれば release ブランチを更新し、新しい RC タグを作成
-    │
-    ↓ 動作確認 OK
-[master] へマージ
-    │
-    ↓
-[vX.Y.Z-rc.N] タグ (master 上) ─────────→ STG 配布 (最終確認)
-    │
-    ↓ 動作確認 OK
-[vX.Y.Z-rc.N] タグ (master 上) ─────────→ 審査提出 (= PRD 配布)
-    │                                       ※審査に提出したビルドがそのままストアリリースされる
-    ↓ 審査パス後
-[vX.Y.Z] タグ (master 上) ──────────────→ (タグのみ作成。ビルド・配布は行わない)
+```mermaid
+flowchart TB
+    subgraph DEV["DEV 配布"]
+        DEV_DIST["DEV 配布"]
+    end
+
+    subgraph STG["STG 配布"]
+        STG_DIST["STG 配布"]
+    end
+
+    subgraph PRD["PRD 配布"]
+        REVIEW["審査提出\n(= PRD 配布)"]
+    end
+
+    develop["[develop]"] --> DEV_DIST
+    develop -->|feature 開発完了| release["[release/vX.Y.Z] 作成"]
+    release --> rc_release["[vX.Y.Z-rc.N] タグ\n(release 上)"]
+    rc_release --> STG_DIST
+    rc_release -->|修正があれば release ブランチを更新し\n新しい RC タグを作成| rc_release
+    rc_release -->|動作確認 OK| merge_master["[master] へマージ"]
+    merge_master --> rc_master["[vX.Y.Z-rc.N] タグ\n(master 上)"]
+    rc_master --> STG_DIST
+    rc_master -->|動作確認 OK| review_submit["[vX.Y.Z-rc.N] タグ\n(master 上)"]
+    review_submit --> REVIEW
+    review_submit -.->|審査に提出したビルドが\nそのままストアリリースされる| REVIEW
+    review_submit -->|審査パス後| tag_release["[vX.Y.Z] タグ\n(master 上)"]
+    tag_release -.->|タグのみ作成\nビルド・配布は行わない| tag_only["バージョン管理用"]
 ```
 
 > **ポイント**: 
