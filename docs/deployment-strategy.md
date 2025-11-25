@@ -156,59 +156,44 @@ vX.Y.Z
 ### Web アプリケーション
 
 ```mermaid
-flowchart TB
-    subgraph DEV["DEV 環境"]
-        DEV_ENV["DEV 環境"]
-    end
+sequenceDiagram
+    participant Flow as ブランチ/タグ操作
+    participant DEV as DEV 環境
+    participant STG as STG 環境
+    participant PRD as PRD 環境
 
-    subgraph STG["STG 環境"]
-        STG_ENV["STG 環境"]
-    end
-
-    subgraph PRD["PRD 環境"]
-        PRD_ENV["PRD 環境"]
-    end
-
-    develop["[develop]"] --> DEV_ENV
-    develop -->|feature 開発完了| release["[release/vX.Y.Z] 作成"]
-    release --> rc_release["[vX.Y.Z-rc.N] タグ\n(release 上)"]
-    rc_release --> STG_ENV
-    rc_release -->|修正があれば release ブランチを更新し\n新しい RC タグを作成| rc_release
-    rc_release -->|動作確認 OK| merge_master["[master] へマージ"]
-    merge_master --> rc_master["[vX.Y.Z-rc.N] タグ\n(master 上)"]
-    rc_master --> STG_ENV
-    rc_master -->|動作確認 OK| tag_release["[vX.Y.Z] タグ\n(master 上)"]
-    tag_release --> PRD_ENV
+    Flow->>DEV: [develop]
+    Note over Flow: feature 開発完了
+    Note over Flow: [release/vX.Y.Z] 作成
+    Flow->>STG: [vX.Y.Z-rc.N] タグ (release 上)
+    Note over Flow: 修正があれば新しい RC タグを作成
+    Note over Flow: 動作確認 OK → [master] へマージ
+    Flow->>STG: [vX.Y.Z-rc.N] タグ (master 上)
+    Note over Flow: 動作確認 OK
+    Flow->>PRD: [vX.Y.Z] タグ (master 上)
 ```
 
 ### モバイルアプリ
 
 ```mermaid
-flowchart TB
-    subgraph DEV["DEV 配布"]
-        DEV_DIST["DEV 配布"]
-    end
+sequenceDiagram
+    participant Flow as ブランチ/タグ操作
+    participant DEV as DEV 配布
+    participant STG as STG 配布
+    participant PRD as PRD 配布
 
-    subgraph STG["STG 配布"]
-        STG_DIST["STG 配布"]
-    end
-
-    subgraph PRD["PRD 配布"]
-        REVIEW["審査提出\n(= PRD 配布)"]
-    end
-
-    develop["[develop]"] --> DEV_DIST
-    develop -->|feature 開発完了| release["[release/vX.Y.Z] 作成"]
-    release --> rc_release["[vX.Y.Z-rc.N] タグ\n(release 上)"]
-    rc_release --> STG_DIST
-    rc_release -->|修正があれば release ブランチを更新し\n新しい RC タグを作成| rc_release
-    rc_release -->|動作確認 OK| merge_master["[master] へマージ"]
-    merge_master --> rc_master["[vX.Y.Z-rc.N] タグ\n(master 上)"]
-    rc_master --> STG_DIST
-    rc_master -->|動作確認 OK| review_submit["[vX.Y.Z-rc.N] タグ\n(master 上)"]
-    review_submit -->|審査提出| REVIEW
-    review_submit -->|審査パス後| tag_release["[vX.Y.Z] タグ\n(master 上)"]
-    tag_release -.->|タグのみ作成\nビルド・配布は行わない| tag_only["バージョン管理用"]
+    Flow->>DEV: [develop]
+    Note over Flow: feature 開発完了
+    Note over Flow: [release/vX.Y.Z] 作成
+    Flow->>STG: [vX.Y.Z-rc.N] タグ (release 上)
+    Note over Flow: 修正があれば新しい RC タグを作成
+    Note over Flow: 動作確認 OK → [master] へマージ
+    Flow->>STG: [vX.Y.Z-rc.N] タグ (master 上)
+    Note over Flow: 動作確認 OK
+    Flow->>PRD: [vX.Y.Z-rc.N] タグ (master 上) = 審査提出
+    Note over PRD: ※審査に提出したビルドがそのままストアリリースされる
+    Note over Flow: 審査パス後
+    Note over Flow: [vX.Y.Z] タグ (master 上) - タグのみ作成、ビルド・配布なし
 ```
 
 > **ポイント**: 
