@@ -1,6 +1,8 @@
-# ブランチ運用手順書
+# ブランチ戦略
 
-本ドキュメントは、Git-flow に準拠したブランチ運用の手順を定めたものです。
+本ドキュメントは、Git-flow に準拠したブランチ戦略を定めたものです。
+
+> **step-by-step 手順については [運用手順書（Runbook）](./runbook.md) を参照してください。**
 
 ## 目次
 
@@ -55,35 +57,16 @@ vX.Y.Z
 
 ## 機能開発フロー
 
-### 1. feature ブランチの作成
+機能開発は以下のフローで行います。
 
-```bash
-# develop ブランチから feature ブランチを作成
-git checkout develop
-git pull origin develop
-git checkout -b feature/your-feature-name
-```
-
-### 2. 開発とコミット
-
-```bash
-# 変更をコミット
-git add .
-git commit -m "feat: 機能の説明"
-```
+1. `develop` ブランチから `feature/*` ブランチを作成
+2. 機能を実装し、コミット
+3. `develop` ブランチに対する PR を作成
+4. レビュー承認後、マージ
 
 > **重要**: 機能開発（`feat:` プレフィックスを持つコミット）は `feature` ブランチで行い、PR を通じて `develop` ブランチにマージする必要があります。`master` や `release` ブランチに直接 feature コミットをプッシュしないでください。
 
-### 3. リモートへのプッシュ
-
-```bash
-git push origin feature/your-feature-name
-```
-
-### 4. PR の作成とレビュー
-
-- `develop` ブランチに対する PR を作成します
-- レビューを受け、承認後にマージします
+📘 **手順の詳細**: [Runbook - 新機能を開発する](./runbook.md#新機能を開発する)
 
 ---
 
@@ -93,26 +76,6 @@ git push origin feature/your-feature-name
 
 - 次のリリースに含める機能が `develop` ブランチに揃った時点
 - リリーススケジュールに基づいて計画的に作成
-
-### リリースブランチの作成手順
-
-#### 1. ローカルでの操作
-
-```bash
-# develop ブランチを最新化
-git checkout develop
-git pull origin develop
-
-# リリースブランチを作成
-# 例: v1.2.0 のリリースを準備する場合
-git checkout -b release/v1.2.0
-```
-
-#### 2. リモートへのプッシュ
-
-```bash
-git push origin release/v1.2.0
-```
 
 ### Feature-Freeze 状態
 
@@ -127,18 +90,7 @@ git push origin release/v1.2.0
   - リリースに必要な設定変更
 - 新機能は次のリリースサイクルで `develop` ブランチから開発を継続
 
-#### Feature-Freeze 中の開発
-
-```bash
-# 新機能開発は develop ブランチで継続
-git checkout develop
-git checkout -b feature/next-version-feature
-
-# バグ修正は release ブランチで実施
-git checkout release/v1.2.0
-git checkout -b bugfix/fix-something
-# 修正後、release ブランチに対する PR を作成
-```
+📘 **手順の詳細**: [Runbook - リリースブランチを作成する](./runbook.md#リリースブランチを作成する)
 
 ---
 
@@ -148,38 +100,13 @@ git checkout -b bugfix/fix-something
 
 本番環境で発生した緊急の問題を修正するための変更です。
 
-### Hot-fix の手順
-
-#### 1. Hot-fix ブランチの作成
-
-```bash
-git checkout master
-git pull origin master
-git checkout -b hotfix/fix-critical-issue
-```
-
-#### 2. 修正の実施
-
-```bash
-git add .
-git commit -m "fix: 緊急修正の説明"
-```
-
-#### 3. PR の作成
+### 原則
 
 - **master ブランチに対する PR として修正を作成**
 - レビューを受け、承認後にマージ
+- Hot-fix は `master` へのマージ後、`develop` にも反映する必要がある
 
-#### 4. develop への反映
-
-Hot-fix は `master` へのマージ後、`develop` にも反映する必要があります。
-
-```bash
-git checkout develop
-git pull origin develop
-git merge master
-git push origin develop
-```
+📘 **手順の詳細**: [Runbook - Hot-fix を適用する](./runbook.md#hot-fix-を適用する)
 
 ---
 
@@ -195,26 +122,11 @@ git push origin develop
 
 非 Hot-fix 修正は、現在の `release` ブランチ（例: `release/v1.2.0`）で Feature-Freeze 中に対応します。
 
-#### 例: v1.2.0 リリース後に発見されたバグを v1.2.1 で修正する場合
-
-```bash
-# 現在のリリースブランチから新しいパッチブランチを作成
-git checkout release/v1.2.0
-git checkout -b bugfix/fix-minor-issue
-
-# 修正を実施
-git add .
-git commit -m "fix: 軽微なバグ修正"
-
-# release/v1.2.0 ブランチに対する PR を作成
-git push origin bugfix/fix-minor-issue
-```
-
-### Feature-Freeze 状態での取り扱い
-
-- 既存の `release/vX.Y.{Z-1}` ブランチに対してバグ修正のみを適用
+- 既存の release ブランチに対してバグ修正のみを適用
 - 機能追加は禁止
 - 修正後、新しいパッチバージョン（例: v1.2.1）としてリリース
+
+📘 **手順の詳細**: [Runbook - リリース後のバグ修正（非 Hot-fix）](./runbook.md#リリース後のバグ修正非-hot-fix)
 
 ---
 
@@ -255,4 +167,5 @@ git push origin bugfix/fix-minor-issue
 
 ## 関連ドキュメント
 
-- [デプロイ運用手順書](./deployment-guide.md)
+- [デプロイ戦略](./deployment-strategy.md)
+- [運用手順書（Runbook）](./runbook.md)
