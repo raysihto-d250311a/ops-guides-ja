@@ -11,6 +11,7 @@
 5. [Hot-fix を適用する](#hot-fix-を適用する)
 6. [審査リジェクト対応](#審査リジェクト対応)
 7. [リリース後のバグ修正（非 Hot-fix）](#リリース後のバグ修正非-hot-fix)
+8. [develop ブランチでのバグ修正](#develop-ブランチでのバグ修正)
 
 ---
 
@@ -101,23 +102,20 @@ git push origin release/v1.2.0
 
 > **関連ドキュメント**: [デプロイ戦略 - RC タグの作成場所](./deployment-strategy.md#rc-タグの作成場所)
 
+RC タグはリリースプロセスにおいて複数回作成されます。ここでは release ブランチ上での RC タグ作成手順を説明します。
+
 ### 前提条件
 
-- リリースブランチまたは hotfix ブランチが存在すること
+- リリースブランチが存在すること
 - リリース対象のコードがプッシュ済みであること
 
 ### 手順
 
-#### Step 1: 対象ブランチをチェックアウト
+#### Step 1: release ブランチをチェックアウト
 
 ```bash
-# リリースブランチの場合
 git checkout release/v1.2.0
 git pull origin release/v1.2.0
-
-# または hotfix ブランチの場合
-git checkout hotfix/fix-critical-issue
-git pull origin hotfix/fix-critical-issue
 ```
 
 #### Step 2: RC タグを作成
@@ -126,7 +124,7 @@ git pull origin hotfix/fix-critical-issue
 # 最初の RC の場合
 git tag v1.2.0-rc.1
 
-# 2回目以降の RC の場合
+# 2回目以降の RC の場合（release ブランチが更新されるたびに作成）
 git tag v1.2.0-rc.2
 ```
 
@@ -163,6 +161,8 @@ bundle exec fastlane deploy_internal
 - [ ] パフォーマンスに問題がないこと
 - [ ] エラーログに異常がないこと
 
+> **注意**: 動作確認で問題が見つかった場合は、release ブランチで修正を行い、新しい RC タグを作成して再度 STG にデプロイします。
+
 ---
 
 ## 本番リリースを実施する
@@ -171,8 +171,8 @@ bundle exec fastlane deploy_internal
 
 ### 前提条件
 
-- RC での動作確認が完了していること
-- モバイルアプリの場合、審査にパスしていること
+- release ブランチでの RC タグによる動作確認が完了していること
+- release ブランチの準備が完了していること
 
 ### 手順
 
@@ -187,22 +187,44 @@ git pull origin master
 
 ```bash
 git merge release/v1.2.0
-```
-
-#### Step 3: master をプッシュ
-
-```bash
 git push origin master
 ```
 
-#### Step 4: 本番リリースタグを作成
+#### Step 3: master 上で RC タグを作成して STG で最終確認
+
+```bash
+git tag v1.2.0-rc.5  # release ブランチでの最後の RC からインクリメント
+git push origin v1.2.0-rc.5
+```
+
+**モバイルアプリの場合（審査提出）:**
+
+```bash
+# iOS: TestFlight への配布・審査提出
+bundle exec fastlane beta
+
+# Android: 内部テストトラックへの配布・審査提出
+bundle exec fastlane deploy_internal
+```
+
+#### Step 4: STG 環境で最終確認（モバイルアプリは審査パスを待つ）
+
+- [ ] 新機能が正しく動作すること
+- [ ] 既存機能にデグレードがないこと
+- [ ] モバイルアプリの場合、審査にパスしていること
+
+> **動作確認 NG の場合**: master から `hotfix/*` ブランチを分岐し、修正を行います。修正完了後に `hotfix/*` 上で RC タグを作成して動作確認し、問題がなければ master にマージして新しい RC タグを作成します。
+
+#### Step 5: 本番リリースタグを作成
+
+> **重要**: 審査にパスした RC タグと同じコミットに対して正式タグを作成します。正式タグのビルドは審査に再提出しません。
 
 ```bash
 git tag v1.2.0
 git push origin v1.2.0
 ```
 
-#### Step 5: PRD 環境へデプロイ
+#### Step 6: PRD 環境へデプロイ
 
 **Web アプリの場合:**
 
@@ -213,12 +235,14 @@ git push origin v1.2.0
 
 **モバイルアプリの場合:**
 
+> **注意**: モバイルアプリでは、審査にパスした RC タグのビルドがそのままストアリリースされます。正式タグ `vX.Y.Z` から新たにビルドを作成して審査に再提出することはありません。
+
 ```bash
-# ストアへのリリース
+# ストアへのリリース（審査パス済みのビルドをリリース）
 bundle exec fastlane release
 ```
 
-#### Step 6: develop ブランチへの反映
+#### Step 7: develop ブランチへの反映
 
 ```bash
 git checkout develop
@@ -227,7 +251,7 @@ git merge master
 git push origin develop
 ```
 
-#### Step 7: リリースブランチの削除（オプション）
+#### Step 8: リリースブランチの削除（オプション）
 
 ```bash
 git branch -d release/v1.2.0
@@ -260,12 +284,12 @@ git checkout -b hotfix/fix-critical-issue
 ```bash
 git add .
 git commit -m "fix: fix critical issue"
+git push origin hotfix/fix-critical-issue
 ```
 
-#### Step 3: RC タグを作成して STG で確認
+#### Step 3: hotfix ブランチ上で RC タグを作成して STG で確認
 
 ```bash
-git push origin hotfix/fix-critical-issue
 git tag v1.2.1-rc.1
 git push origin v1.2.1-rc.1
 ```
@@ -275,27 +299,36 @@ git push origin v1.2.1-rc.1
 - [ ] 修正が正しく適用されていること
 - [ ] 他の機能に影響がないこと
 
+> **動作確認 NG の場合**: hotfix ブランチで追加の修正を行い、新しい RC タグを作成して再度確認します。
+
 #### Step 5: master への PR を作成してマージ
 
 1. GitHub で `master` ブランチに対する PR を作成
 2. レビュー承認後、マージ
 
-#### Step 6: 本番リリースタグを作成
+#### Step 6: master 上で RC タグを作成して最終確認
 
 ```bash
 git checkout master
 git pull origin master
+git tag v1.2.1-rc.2  # hotfix での最後の RC からインクリメント
+git push origin v1.2.1-rc.2
+```
+
+#### Step 7: 本番リリースタグを作成
+
+```bash
 git tag v1.2.1
 git push origin v1.2.1
 ```
 
-#### Step 7: PRD 環境へデプロイ
+#### Step 8: PRD 環境へデプロイ
 
 ```bash
 ./deploy.sh prd v1.2.1
 ```
 
-#### Step 8: develop へ反映
+#### Step 9: develop へ反映
 
 ```bash
 git checkout develop
@@ -321,40 +354,69 @@ git push origin develop
 
 ストアからの通知を確認し、修正が必要な箇所を特定します。
 
-#### Step 2: release ブランチで修正
+#### Step 2: master ブランチ上で Hot-fix 相当の修正を実施
 
 ```bash
-git checkout release/v1.2.0
-git pull origin release/v1.2.0
-
-# 修正を実施
-git add .
-git commit -m "fix: address app store review rejection"
-git push origin release/v1.2.0
+git checkout master
+git pull origin master
+git checkout -b hotfix/fix-review-rejection
 ```
 
-#### Step 3: 新しい RC タグを作成
+修正を実施します：
 
 ```bash
+git add .
+git commit -m "fix: address app store review rejection"
+git push origin hotfix/fix-review-rejection
+```
+
+#### Step 3: master への PR を作成してマージ
+
+1. GitHub で `master` ブランチに対する PR を作成
+2. レビュー承認後、マージ
+
+#### Step 4: 新しい RC タグを作成
+
+> **重要**: 審査に提出するのは常に `master` ブランチ上の RC タグ (`vX.Y.Z-rc.N`) からビルドしたアプリです。
+
+```bash
+git checkout master
+git pull origin master
 git tag v1.2.0-rc.4
 git push origin v1.2.0-rc.4
 ```
 
-#### Step 4: STG 環境で動作確認
+#### Step 5: STG 環境で動作確認
 
 ```bash
 bundle exec fastlane beta  # iOS の場合
 ```
 
-#### Step 5: 審査再提出
+#### Step 6: 審査再提出
+
+> **注意**: 再提出するのは新しい RC タグ (`v1.2.0-rc.4`) のビルドです。
 
 ```bash
 bundle exec fastlane release_to_review
 ```
 
-#### Step 6: 審査パス後、本番リリースへ
+#### Step 7: 審査パス後、本番リリースへ
 
-「本番リリースを実施する」の手順に従ってリリースを完了します。
+審査にパスした RC タグと同じコミットに対して正式タグ `vX.Y.Z` を作成します。
+
+```bash
+git tag v1.2.0
+git push origin v1.2.0
+```
+
+#### Step 8: develop へ反映
+
+```bash
+git checkout develop
+git pull origin develop
+git merge master
+git push origin develop
+```
 
 ---
 
@@ -365,7 +427,7 @@ bundle exec fastlane release_to_review
 ### 前提条件
 
 - 緊急性のないバグが発見されていること
-- 次のパッチリリースとして対応すること
+- 現在の release ブランチに関係する修正であること
 
 ### 手順
 
@@ -400,13 +462,64 @@ git push origin bugfix/fix-minor-issue
 ```bash
 git checkout release/v1.2.0
 git pull origin release/v1.2.0
-git tag v1.2.1-rc.1
-git push origin v1.2.1-rc.1
+git tag v1.2.0-rc.3  # 前回の RC からインクリメント
+git push origin v1.2.0-rc.3
 ```
 
 #### Step 6: STG で動作確認後、本番リリースへ
 
 「本番リリースを実施する」の手順に従ってリリースを完了します。
+
+---
+
+## develop ブランチでのバグ修正
+
+> **関連ドキュメント**: [ブランチ戦略 - 非 Hot-fix 修正の運用](./branching-strategy.md#非-hot-fix-修正の運用)
+
+現在の release ブランチに関係しない、緊急性のないバグ修正や改善を行う場合の手順です。Feature-Freeze 期間中であっても、この手順で対応します。
+
+### 前提条件
+
+- 修正が現在の release ブランチに関係しないこと
+- 緊急性のないバグや改善であること
+
+### 手順
+
+#### Step 1: fix または chore ブランチを作成
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b fix/your-bug-fix-name
+# または
+git checkout -b chore/your-chore-name
+```
+
+#### Step 2: 修正を実施
+
+```bash
+# 変更を実施
+# ...
+
+git add .
+git commit -m "fix: resolve minor issue"
+# または
+git commit -m "chore: update documentation"
+```
+
+#### Step 3: リモートへプッシュ
+
+```bash
+git push origin fix/your-bug-fix-name
+```
+
+#### Step 4: PR を作成
+
+1. GitHub で `develop` ブランチに対する PR を作成
+2. レビュアーを設定
+3. レビュー承認後、マージ
+
+> **注意**: この修正は次回のリリースに含まれます。
 
 ---
 
