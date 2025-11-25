@@ -147,7 +147,7 @@ vX.Y.Z
 > - **審査提出 = PRD 配布**です。審査にパスしたビルドがそのままストアで公開されます
 > - 正式タグ `vX.Y.Z` は、審査にパスした RC タグと同一のコミットに対してバージョン管理のために作成しますが、このタグからビルド・配布は行いません
 
-📘 **手順の詳細**: [Runbook - 本番リリースを実施する](./runbook.md#本番リリースを実施する)、[Runbook - 審査リジェクト対応](./runbook.md#審査リジェクト対応)
+📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - 本番リリースを実施する](./branching-and-deployment-runbook.md#本番リリースを実施する)、[ブランチ・デプロイ運用手順書 - 審査リジェクト対応](./branching-and-deployment-runbook.md#審査リジェクト対応)
 
 ---
 
@@ -221,4 +221,4 @@ vX.Y.Z
 ## 関連ドキュメント
 
 - [ブランチ戦略](./branching-strategy.md)
-- [運用手順書（Runbook）](./runbook.md)
+- [ブランチ・デプロイ運用手順書](./branching-and-deployment-runbook.md)

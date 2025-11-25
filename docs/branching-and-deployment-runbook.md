@@ -1,6 +1,6 @@
-# 運用手順書（Runbook）
+# ブランチ・デプロイ運用手順書
 
-本ドキュメントは、代表的な運用シナリオにおける step-by-step 手順を記載したものです。
+本ドキュメントは、ブランチおよびデプロイに関する代表的な運用シナリオにおける step-by-step 手順を記載したものです。
 
 ## 目次
 
@@ -58,6 +58,21 @@ git push origin feature/your-feature-name
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
+### コミットグラフ
+
+```mermaid
+gitGraph
+    commit id: "A"
+    branch develop
+    checkout develop
+    commit id: "B"
+    branch feature/your-feature-name
+    checkout feature/your-feature-name
+    commit id: "feat: add user feature"
+    checkout develop
+    merge feature/your-feature-name id: "C (マージ)"
+```
+
 ---
 
 ## リリースブランチを作成する
@@ -94,6 +109,20 @@ git push origin release/v1.2.0
 
 - チームに Feature-Freeze 状態であることを通知
 - 以降、`release/v1.2.0` ブランチには新機能の追加は禁止
+
+### コミットグラフ
+
+```mermaid
+gitGraph
+    commit id: "A"
+    branch develop
+    checkout develop
+    commit id: "B"
+    commit id: "C"
+    branch release/v1.2.0
+    checkout release/v1.2.0
+    commit id: "Feature-Freeze 開始" type: HIGHLIGHT
+```
 
 ---
 
@@ -161,6 +190,23 @@ bundle exec fastlane deploy_internal
 - [ ] エラーログに異常がないこと
 
 > **注意**: 動作確認で問題が見つかった場合は、release ブランチで修正を行い、新しい RC タグを作成して再度 STG にデプロイします。
+
+### コミットグラフ
+
+以下は、release ブランチ上で RC タグを作成し、修正後に新しい RC タグを作成するフローの例です。
+
+```mermaid
+gitGraph
+    commit id: "A"
+    branch develop
+    checkout develop
+    commit id: "B"
+    commit id: "C"
+    branch release/v1.2.0
+    checkout release/v1.2.0
+    commit id: "D" tag: "v1.2.0-rc.1"
+    commit id: "fix: 修正" tag: "v1.2.0-rc.2"
+```
 
 ---
 
@@ -257,6 +303,29 @@ git branch -d release/v1.2.0
 git push origin --delete release/v1.2.0
 ```
 
+### コミットグラフ
+
+以下は、release ブランチで複数回の修正と RC タグ作成を経て、master へマージし本番リリースする完全なフローの例です。
+
+```mermaid
+gitGraph
+    commit id: "A"
+    branch develop
+    checkout develop
+    commit id: "B"
+    commit id: "C"
+    branch release/v1.2.0
+    checkout release/v1.2.0
+    commit id: "D" tag: "v1.2.0-rc.1"
+    commit id: "fix: 修正" tag: "v1.2.0-rc.4"
+    checkout main
+    merge release/v1.2.0 id: "E" tag: "v1.2.0-rc.5, v1.2.0"
+    checkout develop
+    merge release/v1.2.0 id: "F (develop へ反映)"
+```
+
+> **注**: 上記の例では、release ブランチ上で複数回の RC タグ（rc.1 〜 rc.4）が作成され、その後 master へマージされています。マージコミット E には RC タグ `v1.2.0-rc.5` と正式タグ `v1.2.0` の両方が付与されます（同一コミット）。
+
 ---
 
 ## Hot-fix を適用する
@@ -335,6 +404,24 @@ hotfix ブランチを develop にマージするための PR を作成します
 3. レビュー承認後、マージ
 
 > **注意**: develop に master をマージするのではなく、hotfix ブランチを develop にマージします。
+
+### コミットグラフ
+
+```mermaid
+gitGraph
+    commit id: "A" tag: "v1.2.0"
+    branch develop
+    checkout develop
+    commit id: "B"
+    checkout main
+    branch hotfix/fix-critical-issue
+    checkout hotfix/fix-critical-issue
+    commit id: "fix: 修正" tag: "v1.2.1-rc.1"
+    checkout main
+    merge hotfix/fix-critical-issue id: "C" tag: "v1.2.1-rc.2, v1.2.1"
+    checkout develop
+    merge hotfix/fix-critical-issue id: "D (develop へ反映)"
+```
 
 ---
 
@@ -417,6 +504,28 @@ hotfix ブランチを develop にマージするための PR を作成します
 
 > **注意**: develop に master をマージするのではなく、hotfix ブランチを develop にマージします。
 
+### コミットグラフ
+
+```mermaid
+gitGraph
+    commit id: "A"
+    branch develop
+    checkout develop
+    commit id: "B"
+    branch release/v1.2.0
+    checkout release/v1.2.0
+    commit id: "C" tag: "v1.2.0-rc.1"
+    checkout main
+    merge release/v1.2.0 id: "D" tag: "v1.2.0-rc.2 (審査提出)"
+    branch hotfix/fix-review-rejection
+    checkout hotfix/fix-review-rejection
+    commit id: "fix: 審査対応" tag: "v1.2.0-rc.3"
+    checkout main
+    merge hotfix/fix-review-rejection id: "E" tag: "v1.2.0-rc.4, v1.2.0"
+    checkout develop
+    merge hotfix/fix-review-rejection id: "F (develop へ反映)"
+```
+
 ---
 
 ## リリース後のバグ修正（非 Hot-fix）
@@ -468,6 +577,26 @@ git push origin v1.2.0-rc.3
 
 「本番リリースを実施する」の手順に従ってリリースを完了します。
 
+### コミットグラフ
+
+```mermaid
+gitGraph
+    commit id: "A"
+    branch develop
+    checkout develop
+    commit id: "B"
+    branch release/v1.2.0
+    checkout release/v1.2.0
+    commit id: "C" tag: "v1.2.0-rc.1"
+    commit id: "D" tag: "v1.2.0-rc.2"
+    branch fix/fix-minor-issue
+    checkout fix/fix-minor-issue
+    commit id: "fix: minor bug"
+    checkout release/v1.2.0
+    merge fix/fix-minor-issue id: "E"
+    commit id: "F" tag: "v1.2.0-rc.3"
+```
+
 ---
 
 ## develop ブランチでのバグ修正
@@ -517,6 +646,21 @@ git push origin fix/your-bug-fix-name
 3. レビュー承認後、マージ
 
 > **注意**: この修正は次回のリリースに含まれます。
+
+### コミットグラフ
+
+```mermaid
+gitGraph
+    commit id: "A"
+    branch develop
+    checkout develop
+    commit id: "B"
+    branch fix/your-bug-fix-name
+    checkout fix/your-bug-fix-name
+    commit id: "fix: resolve minor issue"
+    checkout develop
+    merge fix/your-bug-fix-name id: "C (マージ)"
+```
 
 ---
 
@@ -570,6 +714,25 @@ git diff v1.2.0-rc.4 v1.2.0-rc.5
 - `git diff` の出力に差分がある場合
 - マージ時にコンフリクト解消のためのコード変更が入った場合
 - マージコミット以外のコミットが含まれている場合
+
+### コミットグラフ（省略可能なケースの例）
+
+以下は、`release/v1.2.0` ブランチで動作確認済みの RC タグと、`master` マージ後の RC タグがソースコード上で同一となる例です。
+
+```mermaid
+gitGraph
+    commit id: "A"
+    branch develop
+    checkout develop
+    commit id: "B"
+    branch release/v1.2.0
+    checkout release/v1.2.0
+    commit id: "C" tag: "v1.2.0-rc.4 (動作確認済)"
+    checkout main
+    merge release/v1.2.0 id: "D (マージ)" tag: "v1.2.0-rc.5 (省略可)"
+```
+
+> **ポイント**: `v1.2.0-rc.4` と `v1.2.0-rc.5` はソースコードが同一のため、`v1.2.0-rc.5` のデプロイ・配布と動作確認は省略できます。
 
 ---
 
