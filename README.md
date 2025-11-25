@@ -1,6 +1,11 @@
 # ops-guides-ja
 
-This repository contains operations guides for development teams.
+This repository is intended for creating, refining, and improving Japanese translations of various guidelines. It contains operations guides for development teams.
+
+## Important Notes
+
+- The guidelines included in this repository may not be related to each other in many cases.
+- The convention rules of this repository (such as those defined in CONTRIBUTING.md) do not apply to the individual guidelines contained here.
 
 ## Documents
 
