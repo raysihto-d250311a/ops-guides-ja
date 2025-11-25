@@ -24,3 +24,7 @@
 - ステージング環境でのデプロイと動作確認
 - 本番リリースタグの運用
 - モバイルアプリの審査対応フロー
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before contributing to this project.
