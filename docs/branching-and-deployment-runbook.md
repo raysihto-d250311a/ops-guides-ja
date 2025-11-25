@@ -237,8 +237,8 @@ git checkout -B master origin/master
 #### Step 3: master 上で RC タグを作成して STG で最終確認
 
 ```bash
-git tag v1.2.0-rc.5  # release ブランチでの最後の RC からインクリメント
-git push origin v1.2.0-rc.5
+git tag v1.2.0-rc.3  # release ブランチでの最後の RC からインクリメント
+git push origin v1.2.0-rc.3
 ```
 
 **モバイルアプリの場合（審査提出）:**
@@ -317,14 +317,16 @@ gitGraph
     branch release/v1.2.0
     checkout release/v1.2.0
     commit id: "D" tag: "v1.2.0-rc.1"
-    commit id: "fix: 修正" tag: "v1.2.0-rc.4"
+    commit id: "fix: 修正" tag: "v1.2.0-rc.2"
     checkout main
-    merge release/v1.2.0 id: "E" tag: "v1.2.0-rc.5, v1.2.0"
+    merge release/v1.2.0 id: "E" tag: "v1.2.0-rc.3, v1.2.0"
     checkout develop
     merge release/v1.2.0 id: "F (develop へ反映)"
 ```
 
-> **注**: 上記の例では、release ブランチ上で複数回の RC タグ（rc.1 〜 rc.4）が作成され、その後 master へマージされています。マージコミット E には RC タグ `v1.2.0-rc.5` と正式タグ `v1.2.0` の両方が付与されます（同一コミット）。
+> **注**: 
+> - 上記の例では、release ブランチ上で RC タグ（rc.1、rc.2）が作成され、その後 master へマージされています。マージコミット E には RC タグ `v1.2.0-rc.3` と正式タグ `v1.2.0` の両方が付与されます（同一コミット）。
+> - mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
 
 ---
 
@@ -423,6 +425,8 @@ gitGraph
     merge hotfix/fix-critical-issue id: "D (develop へ反映)"
 ```
 
+> **注**: mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
+
 ---
 
 ## 審査リジェクト対応
@@ -455,12 +459,26 @@ git commit -m "fix: address app store review rejection"
 git push origin hotfix/fix-review-rejection
 ```
 
-#### Step 3: master への PR を作成してマージ
+#### Step 3: hotfix ブランチ上で RC タグを作成して動作確認
+
+```bash
+git tag v1.2.0-rc.3
+git push origin v1.2.0-rc.3
+```
+
+STG 環境にデプロイ・配布して動作確認を行います。
+
+- [ ] 修正が正しく適用されていること
+- [ ] 他の機能に影響がないこと
+
+> **動作確認 NG の場合**: hotfix ブランチで追加の修正を行い、新しい RC タグを作成して再度確認します。
+
+#### Step 4: master への PR を作成してマージ
 
 1. GitHub で `master` ブランチに対する PR を作成
 2. レビュー承認後、マージ
 
-#### Step 4: 新しい RC タグを作成
+#### Step 5: master 上で新しい RC タグを作成
 
 > **重要**: 審査に提出するのは常に `master` ブランチ上の RC タグ (`vX.Y.Z-rc.N`) からビルドしたアプリです。
 
@@ -471,13 +489,15 @@ git tag v1.2.0-rc.4
 git push origin v1.2.0-rc.4
 ```
 
-#### Step 5: STG 環境で動作確認
+#### Step 6: STG 環境で動作確認（省略可能）
+
+> **注意**: hotfix ブランチ上の RC タグ（`v1.2.0-rc.3`）と master 上の RC タグ（`v1.2.0-rc.4`）のソースコードに差分がない場合、STG でのデプロイ・配布と動作確認は省略できます。詳細は「[デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)」を参照してください。
 
 ```bash
 bundle exec fastlane beta  # iOS の場合
 ```
 
-#### Step 6: 審査再提出
+#### Step 7: 審査再提出
 
 > **注意**: 再提出するのは新しい RC タグ (`v1.2.0-rc.4`) のビルドです。
 
@@ -485,7 +505,7 @@ bundle exec fastlane beta  # iOS の場合
 bundle exec fastlane release_to_review
 ```
 
-#### Step 7: 審査パス後、本番リリースへ
+#### Step 8: 審査パス後、本番リリースへ
 
 審査にパスした RC タグと同じコミットに対して正式タグ `vX.Y.Z` を作成します。
 
@@ -494,7 +514,7 @@ git tag v1.2.0
 git push origin v1.2.0
 ```
 
-#### Step 8: develop へ反映
+#### Step 9: develop へ反映
 
 hotfix ブランチを develop にマージするための PR を作成します。
 
@@ -525,6 +545,11 @@ gitGraph
     checkout develop
     merge hotfix/fix-review-rejection id: "F (develop へ反映)"
 ```
+
+> **注**: 
+> - 審査リジェクト対応では、`hotfix/*` ブランチで修正を行い、RC タグ（`v1.2.0-rc.3`）を作成して STG で動作確認を行います。その後 master にマージし、新しい RC タグ（`v1.2.0-rc.4`）を作成します。
+> - 多くの場合、hotfix ブランチ上の RC タグと master マージ後の RC タグはソースコードに差分がないため、二度目の STG デプロイ・配布は省略できます。詳細は「[デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)」を参照してください。
+> - mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
 
 ---
 
@@ -672,7 +697,7 @@ gitGraph
 
 ### 省略可能なケースの例
 
-- `release/vX.Y.Z` ブランチ上の最後の RC タグ（例: `v1.2.0-rc.4`）で動作確認が完了し、`master` にマージした後、`master` 上で作成した新しい RC タグ（例: `v1.2.0-rc.5`）がマージコミットのみで差分がない場合
+- `release/vX.Y.Z` ブランチ上の最後の RC タグ（例: `v1.2.0-rc.1`）で動作確認が完了し、`master` にマージした後、`master` 上で作成した新しい RC タグ（例: `v1.2.0-rc.2`）がマージコミットのみで差分がない場合
 - `hotfix/*` ブランチ上の RC タグで動作確認が完了し、`master` にマージした後、`master` 上で作成した新しい RC タグがマージコミットのみで差分がない場合
 
 ### 前提条件
@@ -688,8 +713,8 @@ gitGraph
 直前にデプロイ・配布したタグと、新しく作成したタグの間に差分がないことを確認します。
 
 ```bash
-# 例: release ブランチ上の最後の RC タグ v1.2.0-rc.4 と、master マージ後の RC タグ v1.2.0-rc.5 を比較
-git diff v1.2.0-rc.4 v1.2.0-rc.5
+# 例: release ブランチ上の最後の RC タグ v1.2.0-rc.1 と、master マージ後の RC タグ v1.2.0-rc.2 を比較
+git diff v1.2.0-rc.1 v1.2.0-rc.2
 ```
 
 > **判断基準**: 上記コマンドを実行して何も出力されなければ、ソースコードは完全一致しています。差分がある場合は変更内容が表示されます。
@@ -727,12 +752,14 @@ gitGraph
     commit id: "B"
     branch release/v1.2.0
     checkout release/v1.2.0
-    commit id: "C" tag: "v1.2.0-rc.4 (動作確認済)"
+    commit id: "C" tag: "v1.2.0-rc.1 (動作確認済)"
     checkout main
-    merge release/v1.2.0 id: "D (マージ)" tag: "v1.2.0-rc.5 (省略可)"
+    merge release/v1.2.0 id: "D (マージ)" tag: "v1.2.0-rc.2 (省略可)"
 ```
 
-> **ポイント**: `v1.2.0-rc.4` と `v1.2.0-rc.5` はソースコードが同一のため、`v1.2.0-rc.5` のデプロイ・配布と動作確認は省略できます。
+> **ポイント**: 
+> - `v1.2.0-rc.1` と `v1.2.0-rc.2` はソースコードが同一のため、`v1.2.0-rc.2` のデプロイ・配布と動作確認は省略できます。
+> - mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
 
 ---
 
