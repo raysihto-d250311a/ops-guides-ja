@@ -319,14 +319,12 @@ gitGraph
     commit id: "D" tag: "v1.2.0-rc.1"
     commit id: "fix: 修正" tag: "v1.2.0-rc.4"
     checkout main
-    merge release/v1.2.0 id: "E"
-    commit id: "F" tag: "v1.2.0-rc.5"
-    commit id: "G" tag: "v1.2.0"
+    merge release/v1.2.0 id: "E" tag: "v1.2.0-rc.5, v1.2.0"
     checkout develop
-    merge release/v1.2.0 id: "H (develop へ反映)"
+    merge release/v1.2.0 id: "F (develop へ反映)"
 ```
 
-> **注**: 上記の例では、release ブランチ上で複数回の RC タグ（rc.1 〜 rc.4）が作成され、その後 master へマージされています。実際の RC 番号は、修正回数に応じてインクリメントされます。
+> **注**: 上記の例では、release ブランチ上で複数回の RC タグ（rc.1 〜 rc.4）が作成され、その後 master へマージされています。マージコミット E には RC タグ `v1.2.0-rc.5` と正式タグ `v1.2.0` の両方が付与されます（同一コミット）。
 
 ---
 
@@ -420,11 +418,9 @@ gitGraph
     checkout hotfix/fix-critical-issue
     commit id: "fix: 修正" tag: "v1.2.1-rc.1"
     checkout main
-    merge hotfix/fix-critical-issue id: "C"
-    commit id: "D" tag: "v1.2.1-rc.2"
-    commit id: "E" tag: "v1.2.1"
+    merge hotfix/fix-critical-issue id: "C" tag: "v1.2.1-rc.2, v1.2.1"
     checkout develop
-    merge hotfix/fix-critical-issue id: "F (develop へ反映)"
+    merge hotfix/fix-critical-issue id: "D (develop へ反映)"
 ```
 
 ---
@@ -520,17 +516,14 @@ gitGraph
     checkout release/v1.2.0
     commit id: "C" tag: "v1.2.0-rc.1"
     checkout main
-    merge release/v1.2.0 id: "D"
-    commit id: "E" tag: "v1.2.0-rc.2 (審査提出)"
+    merge release/v1.2.0 id: "D" tag: "v1.2.0-rc.2 (審査提出)"
     branch hotfix/fix-review-rejection
     checkout hotfix/fix-review-rejection
-    commit id: "fix: 審査対応"
+    commit id: "fix: 審査対応" tag: "v1.2.0-rc.3"
     checkout main
-    merge hotfix/fix-review-rejection id: "F"
-    commit id: "G" tag: "v1.2.0-rc.4 (再提出)"
-    commit id: "H" tag: "v1.2.0"
+    merge hotfix/fix-review-rejection id: "E" tag: "v1.2.0-rc.4, v1.2.0"
     checkout develop
-    merge hotfix/fix-review-rejection id: "I (develop へ反映)"
+    merge hotfix/fix-review-rejection id: "F (develop へ反映)"
 ```
 
 ---
