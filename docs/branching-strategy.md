@@ -72,7 +72,7 @@ git add .
 git commit -m "feat: 機能の説明"
 ```
 
-> **重要**: `feat` (feature) コミットは最終的に `develop` ブランチにマージされる必要があります。`feature` ブランチで作業し、PR を通じて `develop` にマージしてください。
+> **重要**: 機能開発（`feat:` プレフィックスを持つコミット）は `feature` ブランチで行い、PR を通じて `develop` ブランチにマージする必要があります。`master` や `release` ブランチに直接 feature コミットをプッシュしないでください。
 
 ### 3. リモートへのプッシュ
 
@@ -193,7 +193,7 @@ git push origin develop
 
 ### 運用方法
 
-非 Hot-fix 修正は、`release/vX.Y.{Z-1}` ブランチで Feature-Freeze 中に対応します。
+非 Hot-fix 修正は、現在の `release` ブランチ（例: `release/v1.2.0`）で Feature-Freeze 中に対応します。
 
 #### 例: v1.2.0 リリース後に発見されたバグを v1.2.1 で修正する場合
 

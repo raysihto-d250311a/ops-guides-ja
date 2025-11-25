@@ -193,7 +193,7 @@ git checkout v1.2.0-rc.3
 bundle exec fastlane release_to_review
 ```
 
-#### 2. 審査結果の対応
+#### 2. 審査結果への対応
 
 ##### 審査パスの場合
 
