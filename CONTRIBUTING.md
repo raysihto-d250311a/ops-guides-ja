@@ -1,12 +1,12 @@
 # Contributing Guide
 
-このリポジトリーへの貢献に感謝します。以下のガイドラインに従ってください。
+Thank you for your interest in contributing to this repository. Please follow the guidelines below.
 
-## コミットメッセージと PR タイトル
+## Commit Messages and PR Titles
 
-コミットメッセージと Pull Request のタイトルは **英語** で記述し、[Conventional Commits](https://www.conventionalcommits.org/) に準拠してください。
+Commit messages and Pull Request titles must be written in **English** and follow [Conventional Commits](https://www.conventionalcommits.org/).
 
-### フォーマット
+### Format
 
 ```
 <type>[optional scope]: <description>
@@ -16,33 +16,33 @@
 [optional footer(s)]
 ```
 
-### 使用する type
+### Available Types
 
-| type | 説明 |
-|------|------|
-| `build` | ビルドシステムや外部依存関係に影響する変更 |
-| `chore` | その他の変更（ソースやテストの変更を含まない） |
-| `ci` | CI 設定ファイルやスクリプトの変更 |
-| `docs` | ドキュメントのみの変更 |
-| `feat` | 新機能の追加 |
-| `fix` | バグ修正 |
-| `perf` | パフォーマンスを向上させるコード変更 |
-| `refactor` | バグ修正や機能追加を含まないコード変更 |
-| `revert` | 以前のコミットを取り消す変更 |
-| `style` | コードの意味に影響しない変更（空白、フォーマット、セミコロンなど） |
-| `test` | テストの追加や既存テストの修正 |
-| `ux` | ユーザーエクスペリエンスに関する変更 |
+| type | Description |
+|------|-------------|
+| `build` | Changes that affect the build system or external dependencies |
+| `chore` | Other changes that don't modify src or test files |
+| `ci` | Changes to CI configuration files and scripts |
+| `docs` | Documentation only changes |
+| `feat` | A new feature |
+| `fix` | A bug fix |
+| `perf` | A code change that improves performance |
+| `refactor` | A code change that neither fixes a bug nor adds a feature |
+| `revert` | Reverts a previous commit |
+| `style` | Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc) |
+| `test` | Adding missing tests or correcting existing tests |
+| `ux` | Changes related to user experience |
 
-### scope の例
+### Scope Examples
 
-type に続けて scope を指定することで、変更の範囲を明確にできます：
+You can specify a scope after the type to clarify the area of change:
 
-- `chore(deps)`: 依存関係の更新
-- `chore(release)`: リリース関連の変更
-- `fix(api)`: API に関するバグ修正
-- `feat(auth)`: 認証機能の追加
+- `chore(deps)`: Dependency updates
+- `chore(release)`: Release related changes
+- `fix(api)`: API bug fixes
+- `feat(auth)`: Authentication feature additions
 
-### 例
+### Examples
 
 ```
 feat(auth): add login functionality
@@ -54,19 +54,19 @@ docs: update README with installation instructions
 chore(deps): upgrade lodash to 4.17.21
 ```
 
-## 用語規則
+## Terminology Rules
 
-日本語の用語は、内閣告示およびマイクロソフトのスタイルガイドに準拠してください。長音符号を含む表記を使用します。
+Japanese terminology should follow the Cabinet Office announcements and Microsoft style guides. Use long vowel marks (prolonged sound marks).
 
-| 正しい表記 | 誤った表記 |
-|-----------|-----------|
+| Correct | Incorrect |
+|---------|-----------|
 | リポジトリー | リポジトリ |
 | ディレクトリー | ディレクトリ |
 | カテゴリー | カテゴリ |
 | プロパティー | プロパティ |
 | メモリー | メモリ |
 
-## 言語
+## Language
 
-- **日本語**: ドキュメント、コードコメント、説明などは日本語で記述してください。
-- **英語**: コミットメッセージ、PR タイトル、README.md は英語で記述してください。
+- **Japanese**: Documents, code comments, and explanations should be written in Japanese.
+- **English**: Commit messages, PR titles, README.md, and CONTRIBUTING.md should be written in English.

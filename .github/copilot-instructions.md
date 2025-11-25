@@ -15,6 +15,7 @@
 - **コミットメッセージ**: Git のコミットメッセージは英語で記述してください。Conventional Commits に準拠してください。
 - **PR タイトル**: Pull Request のタイトルは英語で記述してください。Conventional Commits に準拠してください。
 - **README.md**: README.md は英語で記述してください。
+- **CONTRIBUTING.md**: CONTRIBUTING.md は英語で記述してください。
 
 ## Conventional Commits
 
