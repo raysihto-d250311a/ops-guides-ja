@@ -102,49 +102,39 @@ git push origin release/v1.2.0
 
 > **関連ドキュメント**: [デプロイ戦略 - RC タグの作成場所](./deployment-strategy.md#rc-タグの作成場所)
 
+RC タグはリリースプロセスにおいて複数回作成されます。ここでは release ブランチ上での RC タグ作成手順を説明します。
+
 ### 前提条件
 
-- リリースブランチまたは hotfix ブランチが存在すること
+- リリースブランチが存在すること
 - リリース対象のコードがプッシュ済みであること
 
 ### 手順
 
-#### Step 1: master ブランチをチェックアウト
+#### Step 1: release ブランチをチェックアウト
 
 ```bash
-git checkout master
-git pull origin master
+git checkout release/v1.2.0
+git pull origin release/v1.2.0
 ```
 
-#### Step 2: release または hotfix ブランチをマージ
-
-```bash
-# リリースブランチの場合
-git merge release/v1.2.0
-
-# または hotfix ブランチの場合
-git merge hotfix/fix-critical-issue
-
-git push origin master
-```
-
-#### Step 3: RC タグを作成
+#### Step 2: RC タグを作成
 
 ```bash
 # 最初の RC の場合
 git tag v1.2.0-rc.1
 
-# 2回目以降の RC の場合
+# 2回目以降の RC の場合（release ブランチが更新されるたびに作成）
 git tag v1.2.0-rc.2
 ```
 
-#### Step 4: RC タグをプッシュ
+#### Step 3: RC タグをプッシュ
 
 ```bash
 git push origin v1.2.0-rc.1
 ```
 
-#### Step 5: STG 環境へデプロイ
+#### Step 4: STG 環境へデプロイ
 
 **Web アプリの場合:**
 
@@ -164,12 +154,14 @@ bundle exec fastlane beta
 bundle exec fastlane deploy_internal
 ```
 
-#### Step 6: 動作確認
+#### Step 5: 動作確認
 
 - [ ] 新機能が正しく動作すること
 - [ ] 既存機能にデグレードがないこと
 - [ ] パフォーマンスに問題がないこと
 - [ ] エラーログに異常がないこと
+
+> **注意**: 動作確認で問題が見つかった場合は、release ブランチで修正を行い、新しい RC タグを作成して再度 STG にデプロイします。
 
 ---
 
@@ -179,9 +171,8 @@ bundle exec fastlane deploy_internal
 
 ### 前提条件
 
-- リリースブランチの準備が完了していること
-- RC での動作確認が完了していること
-- モバイルアプリの場合、RC タグのビルドが審査にパスしていること
+- release ブランチでの RC タグによる動作確認が完了していること
+- release ブランチの準備が完了していること
 
 ### 手順
 
@@ -199,14 +190,14 @@ git merge release/v1.2.0
 git push origin master
 ```
 
-#### Step 3: RC タグを作成して STG で確認
+#### Step 3: master 上で RC タグを作成して STG で最終確認
 
 ```bash
-git tag v1.2.0-rc.1
-git push origin v1.2.0-rc.1
+git tag v1.2.0-rc.5  # release ブランチでの最後の RC からインクリメント
+git push origin v1.2.0-rc.5
 ```
 
-**モバイルアプリの場合:**
+**モバイルアプリの場合（審査提出）:**
 
 ```bash
 # iOS: TestFlight への配布・審査提出
@@ -216,11 +207,13 @@ bundle exec fastlane beta
 bundle exec fastlane deploy_internal
 ```
 
-#### Step 4: STG 環境で動作確認（モバイルアプリは審査パスを待つ）
+#### Step 4: STG 環境で最終確認（モバイルアプリは審査パスを待つ）
 
 - [ ] 新機能が正しく動作すること
 - [ ] 既存機能にデグレードがないこと
 - [ ] モバイルアプリの場合、審査にパスしていること
+
+> **動作確認 NG の場合**: master から `hotfix/*` ブランチを分岐し、修正を行います。修正完了後に `hotfix/*` 上で RC タグを作成して動作確認し、問題がなければ master にマージして新しい RC タグを作成します。
 
 #### Step 5: 本番リリースタグを作成
 
@@ -291,12 +284,12 @@ git checkout -b hotfix/fix-critical-issue
 ```bash
 git add .
 git commit -m "fix: fix critical issue"
+git push origin hotfix/fix-critical-issue
 ```
 
-#### Step 3: RC タグを作成して STG で確認
+#### Step 3: hotfix ブランチ上で RC タグを作成して STG で確認
 
 ```bash
-git push origin hotfix/fix-critical-issue
 git tag v1.2.1-rc.1
 git push origin v1.2.1-rc.1
 ```
@@ -306,27 +299,36 @@ git push origin v1.2.1-rc.1
 - [ ] 修正が正しく適用されていること
 - [ ] 他の機能に影響がないこと
 
+> **動作確認 NG の場合**: hotfix ブランチで追加の修正を行い、新しい RC タグを作成して再度確認します。
+
 #### Step 5: master への PR を作成してマージ
 
 1. GitHub で `master` ブランチに対する PR を作成
 2. レビュー承認後、マージ
 
-#### Step 6: 本番リリースタグを作成
+#### Step 6: master 上で RC タグを作成して最終確認
 
 ```bash
 git checkout master
 git pull origin master
+git tag v1.2.1-rc.2  # hotfix での最後の RC からインクリメント
+git push origin v1.2.1-rc.2
+```
+
+#### Step 7: 本番リリースタグを作成
+
+```bash
 git tag v1.2.1
 git push origin v1.2.1
 ```
 
-#### Step 7: PRD 環境へデプロイ
+#### Step 8: PRD 環境へデプロイ
 
 ```bash
 ./deploy.sh prd v1.2.1
 ```
 
-#### Step 8: develop へ反映
+#### Step 9: develop へ反映
 
 ```bash
 git checkout develop
@@ -425,7 +427,7 @@ git push origin develop
 ### 前提条件
 
 - 緊急性のないバグが発見されていること
-- 次のパッチリリースとして対応すること
+- 現在の release ブランチに関係する修正であること
 
 ### 手順
 
@@ -460,8 +462,8 @@ git push origin bugfix/fix-minor-issue
 ```bash
 git checkout release/v1.2.0
 git pull origin release/v1.2.0
-git tag v1.2.1-rc.1
-git push origin v1.2.1-rc.1
+git tag v1.2.0-rc.3  # 前回の RC からインクリメント
+git push origin v1.2.0-rc.3
 ```
 
 #### Step 6: STG で動作確認後、本番リリースへ
