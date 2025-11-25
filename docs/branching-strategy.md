@@ -82,6 +82,7 @@ vX.Y.Z
 
 - 次のリリースに含める機能が `develop` ブランチに揃った時点
 - リリーススケジュールに基づいて計画的に作成
+- 定期的なリリースを行うプロジェクトで、Feature-Freeze 時点で新機能がない場合は、パッチバージョンを上げて `release/vX.Y.{Z+1}` として Feature-Freeze を開始
 
 ### Feature-Freeze 状態
 
@@ -126,11 +127,11 @@ vX.Y.Z
 
 ### 運用方法
 
-非 Hot-fix 修正は、Feature-Freeze 状態かどうかによって対応方法が異なります。
+非 Hot-fix 修正の対応方法は、修正が現在の release ブランチに関係するかどうかで決まります。
 
-#### Feature-Freeze 期間中の場合
+#### 現在の release ブランチに関係する修正の場合
 
-現在の `release` ブランチ（例: `release/v1.2.0`）で対応します。
+現在の `release` ブランチ（例: `release/v1.2.0`）に対して修正を適用します。
 
 - 既存の release ブランチに対してバグ修正のみを適用
 - 機能追加は禁止
@@ -138,9 +139,9 @@ vX.Y.Z
 
 📘 **手順の詳細**: [Runbook - リリース後のバグ修正（非 Hot-fix）](./runbook.md#リリース後のバグ修正非-hot-fix)
 
-#### Feature-Freeze 期間外の場合
+#### 現在の release ブランチに関係しない修正の場合
 
-`develop` ブランチに対して修正を行います。
+Feature-Freeze 期間中であっても、`develop` ブランチに対して修正を行います。
 
 - `fix/*` または `chore/*` ブランチを `develop` から作成
 - 修正を実施し、`develop` ブランチに対する PR を作成
