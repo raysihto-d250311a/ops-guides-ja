@@ -10,7 +10,7 @@
 4. [本番リリースを実施する](#本番リリースを実施する)
 5. [Hot-fix を適用する](#hot-fix-を適用する)
 6. [審査リジェクト対応](#審査リジェクト対応)
-7. [リリース後のバグ修正（非 Hot-fix）](#リリース後のバグ修正非-hot-fix)
+7. [リリースブランチでのバグ修正 (非 Hot-fix)](#リリースブランチでのバグ修正非-hot-fix)
 8. [develop ブランチでのバグ修正](#develop-ブランチでのバグ修正)
 9. [GitHub 設定変更を適用する](#github-設定変更を適用する)
 10. [デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)
@@ -155,7 +155,7 @@ git checkout -B release/v1.2.0 origin/release/v1.2.0
 # 最初の RC の場合
 git tag v1.2.0-rc.1
 
-# 2回目以降の RC の場合（release ブランチが更新されるたびに作成）
+# 2回目以降の RC の場合 (release ブランチが更新されるたびに作成)
 git tag v1.2.0-rc.2
 ```
 
@@ -227,7 +227,7 @@ gitGraph
 
 #### Step 1: release ブランチから master への PR を作成
 
-1. GitHub で `master` ブランチに対する PR を作成（ソースブランチ: `release/v1.2.0`）
+1. GitHub で `master` ブランチに対する PR を作成 (ソースブランチ: `release/v1.2.0`)
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
@@ -245,7 +245,7 @@ git tag v1.2.0-rc.3  # release ブランチでの最後の RC からインクリ
 git push origin v1.2.0-rc.3
 ```
 
-**モバイルアプリの場合（審査提出）:**
+**モバイルアプリの場合 (審査提出):**
 
 ```bash
 # iOS: TestFlight への配布・審査提出
@@ -255,7 +255,7 @@ bundle exec fastlane beta
 bundle exec fastlane deploy_internal
 ```
 
-#### Step 4: STG 環境で最終確認（モバイルアプリは審査パスを待つ）
+#### Step 4: STG 環境で最終確認 (モバイルアプリは審査パスを待つ)
 
 - [ ] 新機能が正しく動作すること
 - [ ] 既存機能にデグレードがないこと
@@ -286,7 +286,7 @@ git push origin v1.2.0
 > **注意**: モバイルアプリでは、審査にパスした RC タグのビルドがそのままストアリリースされます。正式タグ `vX.Y.Z` から新たにビルドを作成して審査に再提出することはありません。
 
 ```bash
-# ストアへのリリース（審査パス済みのビルドをリリース）
+# ストアへのリリース (審査パス済みのビルドをリリース)
 bundle exec fastlane release
 ```
 
@@ -294,13 +294,13 @@ bundle exec fastlane release
 
 release ブランチを develop にマージするための PR を作成します。
 
-1. GitHub で `develop` ブランチに対する PR を作成（ソースブランチ: `release/v1.2.0`）
+1. GitHub で `develop` ブランチに対する PR を作成 (ソースブランチ: `release/v1.2.0`)
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
 > **注意**: develop に master をマージするのではなく、release ブランチを develop にマージします。
 
-#### Step 8: リリースブランチの削除（オプション）
+#### Step 8: リリースブランチの削除 (オプション)
 
 ```bash
 git branch -d release/v1.2.0
@@ -330,7 +330,7 @@ gitGraph
 ```
 
 > **注**: 
-> - 上記の例では、release ブランチ上で RC タグ（rc.1、rc.2）が作成され、その後 master へマージされています。マージコミット E には RC タグ `v1.2.0-rc.3` と正式タグ `v1.2.0` の両方が付与されます（同一コミット）。
+> - 上記の例では、release ブランチ上で RC タグ (rc.1、rc.2) が作成され、その後 master へマージされています。マージコミット E には RC タグ `v1.2.0-rc.3` と正式タグ `v1.2.0` の両方が付与されます (同一コミット)。
 
 ---
 
@@ -405,7 +405,7 @@ git push origin v1.2.1
 
 hotfix ブランチを develop にマージするための PR を作成します。
 
-1. GitHub で `develop` ブランチに対する PR を作成（ソースブランチ: `hotfix/fix-critical-issue`）
+1. GitHub で `develop` ブランチに対する PR を作成 (ソースブランチ: `hotfix/fix-critical-issue`)
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
@@ -492,9 +492,9 @@ git tag v1.2.0-rc.4
 git push origin v1.2.0-rc.4
 ```
 
-#### Step 6: STG 環境で動作確認（省略可能）
+#### Step 6: STG 環境で動作確認 (省略可能)
 
-> **注意**: hotfix ブランチ上の RC タグ（`v1.2.0-rc.3`）と master 上の RC タグ（`v1.2.0-rc.4`）のソースコードに差分がない場合、STG でのデプロイ・配布と動作確認は省略できます。詳細は「[デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)」を参照してください。
+> **注意**: hotfix ブランチ上の RC タグ (`v1.2.0-rc.3`) と master 上の RC タグ (`v1.2.0-rc.4`) のソースコードに差分がない場合、STG でのデプロイ・配布と動作確認は省略できます。詳細は「[デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)」を参照してください。
 
 ```bash
 bundle exec fastlane beta  # iOS の場合
@@ -521,7 +521,7 @@ git push origin v1.2.0
 
 hotfix ブランチを develop にマージするための PR を作成します。
 
-1. GitHub で `develop` ブランチに対する PR を作成（ソースブランチ: `hotfix/fix-review-rejection`）
+1. GitHub で `develop` ブランチに対する PR を作成 (ソースブランチ: `hotfix/fix-review-rejection`)
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
@@ -551,12 +551,12 @@ gitGraph
 ```
 
 > **注**: 
-> - 審査リジェクト対応では、`hotfix/*` ブランチで修正を行い、RC タグ（`v1.2.0-rc.3`）を作成して STG で動作確認を行います。その後 master にマージし、新しい RC タグ（`v1.2.0-rc.4`）を作成します。
+> - 審査リジェクト対応では、`hotfix/*` ブランチで修正を行い、RC タグ (`v1.2.0-rc.3`) を作成して STG で動作確認を行います。その後 master にマージし、新しい RC タグ (`v1.2.0-rc.4`) を作成します。
 > - 多くの場合、hotfix ブランチ上の RC タグと master マージ後の RC タグはソースコードに差分がないため、二度目の STG デプロイ・配布は省略できます。詳細は「[デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)」を参照してください。
 
 ---
 
-## リリース後のバグ修正（非 Hot-fix）
+## リリースブランチでのバグ修正 (非 Hot-fix)
 
 > **関連ドキュメント**: [ブランチ戦略 - 非 Hot-fix 修正の運用](./branching-strategy.md#非-hot-fix-修正の運用)
 
@@ -758,13 +758,13 @@ git push origin chore/update-github-settings
 
 master へのマージ完了後、**同じ chore ブランチ**を develop にもマージします。
 
-1. GitHub で `develop` ブランチに対する PR を作成（ソースブランチ: `chore/update-github-settings`）
+1. GitHub で `develop` ブランチに対する PR を作成 (ソースブランチ: `chore/update-github-settings`)
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
 > **注意**: develop に master をマージするのではなく、chore ブランチを develop にマージします。これは Hot-fix の運用と同じパターンです。
 
-#### Step 7: chore ブランチの削除（オプション）
+#### Step 7: chore ブランチの削除 (オプション)
 
 ```bash
 git branch -d chore/update-github-settings
@@ -839,7 +839,7 @@ git push origin chore/update-ci-workflow
 
 ### 省略可能なケースの例
 
-- `release/vX.Y.Z` ブランチ上の最後の RC タグ（例: `v1.2.0-rc.1`）で動作確認が完了し、`master` にマージした後、`master` 上で作成した新しい RC タグ（例: `v1.2.0-rc.2`）がマージコミットのみで差分がない場合
+- `release/vX.Y.Z` ブランチ上の最後の RC タグ (例: `v1.2.0-rc.1`) で動作確認が完了し、`master` にマージした後、`master` 上で作成した新しい RC タグ (例: `v1.2.0-rc.2`) がマージコミットのみで差分がない場合
 - `hotfix/*` ブランチ上の RC タグで動作確認が完了し、`master` にマージした後、`master` 上で作成した新しい RC タグがマージコミットのみで差分がない場合
 
 ### 前提条件
@@ -872,7 +872,7 @@ git diff v1.2.0-rc.1 v1.2.0-rc.2
 
 #### Step 3: 次のステップへ進む
 
-省略後、本来の次のステップ（審査提出、本番リリースタグ作成など）に進みます。
+省略後、本来の次のステップ (審査提出、本番リリースタグ作成など) に進みます。
 
 ### 省略できないケース
 
@@ -882,7 +882,7 @@ git diff v1.2.0-rc.1 v1.2.0-rc.2
 - マージ時にコンフリクト解消のためのコード変更が入った場合
 - マージコミット以外のコミットが含まれている場合
 
-### コミットグラフ（省略可能なケースの例）
+### コミットグラフ (省略可能なケースの例)
 
 以下は、`release/v1.2.0` ブランチで動作確認済みの RC タグと、`master` マージ後の RC タグがソースコード上で同一となる例です。
 
