@@ -62,6 +62,7 @@ git push origin feature/your-feature-name
 ### コミットグラフ
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A"
     branch develop
@@ -114,6 +115,7 @@ git push origin release/v1.2.0
 ### コミットグラフ
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A"
     branch develop
@@ -197,6 +199,7 @@ bundle exec fastlane deploy_internal
 以下は、release ブランチ上で RC タグを作成し、修正後に新しい RC タグを作成するフローの例です。
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A"
     branch develop
@@ -309,6 +312,7 @@ git push origin --delete release/v1.2.0
 以下は、release ブランチで複数回の修正と RC タグ作成を経て、master へマージし本番リリースする完全なフローの例です。
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A"
     branch develop
@@ -319,7 +323,7 @@ gitGraph
     checkout release/v1.2.0
     commit id: "D" tag: "v1.2.0-rc.1"
     commit id: "fix: 修正" tag: "v1.2.0-rc.2"
-    checkout main
+    checkout master
     merge release/v1.2.0 id: "E" tag: "v1.2.0-rc.3, v1.2.0"
     checkout develop
     merge release/v1.2.0 id: "F (develop へ反映)"
@@ -327,7 +331,6 @@ gitGraph
 
 > **注**: 
 > - 上記の例では、release ブランチ上で RC タグ（rc.1、rc.2）が作成され、その後 master へマージされています。マージコミット E には RC タグ `v1.2.0-rc.3` と正式タグ `v1.2.0` の両方が付与されます（同一コミット）。
-> - mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
 
 ---
 
@@ -411,22 +414,21 @@ hotfix ブランチを develop にマージするための PR を作成します
 ### コミットグラフ
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A" tag: "v1.2.0"
     branch develop
     checkout develop
     commit id: "B"
-    checkout main
+    checkout master
     branch hotfix/fix-critical-issue
     checkout hotfix/fix-critical-issue
     commit id: "fix: 修正" tag: "v1.2.1-rc.1"
-    checkout main
+    checkout master
     merge hotfix/fix-critical-issue id: "C" tag: "v1.2.1-rc.2, v1.2.1"
     checkout develop
     merge hotfix/fix-critical-issue id: "D (develop へ反映)"
 ```
-
-> **注**: mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
 
 ---
 
@@ -528,6 +530,7 @@ hotfix ブランチを develop にマージするための PR を作成します
 ### コミットグラフ
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A"
     branch develop
@@ -536,12 +539,12 @@ gitGraph
     branch release/v1.2.0
     checkout release/v1.2.0
     commit id: "C" tag: "v1.2.0-rc.1"
-    checkout main
+    checkout master
     merge release/v1.2.0 id: "D" tag: "v1.2.0-rc.2 (審査提出)"
     branch hotfix/fix-review-rejection
     checkout hotfix/fix-review-rejection
     commit id: "fix: 審査対応" tag: "v1.2.0-rc.3"
-    checkout main
+    checkout master
     merge hotfix/fix-review-rejection id: "E" tag: "v1.2.0-rc.4, v1.2.0"
     checkout develop
     merge hotfix/fix-review-rejection id: "F (develop へ反映)"
@@ -550,7 +553,6 @@ gitGraph
 > **注**: 
 > - 審査リジェクト対応では、`hotfix/*` ブランチで修正を行い、RC タグ（`v1.2.0-rc.3`）を作成して STG で動作確認を行います。その後 master にマージし、新しい RC タグ（`v1.2.0-rc.4`）を作成します。
 > - 多くの場合、hotfix ブランチ上の RC タグと master マージ後の RC タグはソースコードに差分がないため、二度目の STG デプロイ・配布は省略できます。詳細は「[デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)」を参照してください。
-> - mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
 
 ---
 
@@ -606,6 +608,7 @@ git push origin v1.2.0-rc.3
 ### コミットグラフ
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A"
     branch develop
@@ -676,6 +679,7 @@ git push origin fix/your-bug-fix-name
 ### コミットグラフ
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A"
     branch develop
@@ -770,16 +774,17 @@ git push origin --delete chore/update-github-settings
 ### コミットグラフ
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A"
     branch develop
     checkout develop
     commit id: "B"
-    checkout main
+    checkout master
     branch chore/update-github-settings
     checkout chore/update-github-settings
     commit id: "chore: update CODEOWNERS"
-    checkout main
+    checkout master
     merge chore/update-github-settings id: "C (master へ反映)"
     checkout develop
     merge chore/update-github-settings id: "D (develop へ反映)"
@@ -787,7 +792,6 @@ gitGraph
 
 > **注**: 
 > - このフローではバージョンタグを作成しません。GitHub の設定変更のみが目的であり、アプリケーションのリリースは行わないためです。
-> - mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
 
 ### 適用例
 
@@ -883,6 +887,7 @@ git diff v1.2.0-rc.1 v1.2.0-rc.2
 以下は、`release/v1.2.0` ブランチで動作確認済みの RC タグと、`master` マージ後の RC タグがソースコード上で同一となる例です。
 
 ```mermaid
+%%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
 gitGraph
     commit id: "A"
     branch develop
@@ -891,13 +896,12 @@ gitGraph
     branch release/v1.2.0
     checkout release/v1.2.0
     commit id: "C" tag: "v1.2.0-rc.1 (動作確認済)"
-    checkout main
+    checkout master
     merge release/v1.2.0 id: "D (マージ)" tag: "v1.2.0-rc.2 (省略可)"
 ```
 
 > **ポイント**: 
 > - `v1.2.0-rc.1` と `v1.2.0-rc.2` はソースコードが同一のため、`v1.2.0-rc.2` のデプロイ・配布と動作確認は省略できます。
-> - mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
 
 ---
 
