@@ -324,7 +324,7 @@ gitGraph
     commit id: "D" tag: "v1.2.0-rc.1"
     commit id: "fix: 修正" tag: "v1.2.0-rc.2"
     checkout master
-    merge release/v1.2.0 id: "E" tag: "v1.2.0-rc.3, v1.2.0"
+    merge release/v1.2.0 id: "E" tag: "v1.2.0-rc.3" tag: "v1.2.0"
     checkout develop
     merge release/v1.2.0 id: "F (develop へ反映)"
 ```
@@ -425,7 +425,7 @@ gitGraph
     checkout hotfix/fix-critical-issue
     commit id: "fix: 修正" tag: "v1.2.1-rc.1"
     checkout master
-    merge hotfix/fix-critical-issue id: "C" tag: "v1.2.1-rc.2, v1.2.1"
+    merge hotfix/fix-critical-issue id: "C" tag: "v1.2.1-rc.2" tag: "v1.2.1"
     checkout develop
     merge hotfix/fix-critical-issue id: "D (develop へ反映)"
 ```
@@ -545,7 +545,7 @@ gitGraph
     checkout hotfix/fix-review-rejection
     commit id: "fix: 審査対応" tag: "v1.2.0-rc.3"
     checkout master
-    merge hotfix/fix-review-rejection id: "E" tag: "v1.2.0-rc.4, v1.2.0"
+    merge hotfix/fix-review-rejection id: "E" tag: "v1.2.0-rc.4" tag: "v1.2.0"
     checkout develop
     merge hotfix/fix-review-rejection id: "F (develop へ反映)"
 ```
