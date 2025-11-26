@@ -137,7 +137,7 @@ vX.Y.Z
 - 既存の release ブランチに対してバグ修正のみを適用
 - 機能追加は禁止
 
-📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - リリースブランチでのバグ修正 (非 Hot-fix)](./branching-and-deployment-runbook.md#リリースブランチでのバグ修正非-hot-fix)
+📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - リリースブランチでのバグ修正 (非 Hot-fix)](./branching-and-deployment-runbook.md#リリースブランチでのバグ修正-非-hot-fix)
 
 #### 現在の release ブランチに関係しない修正の場合
 

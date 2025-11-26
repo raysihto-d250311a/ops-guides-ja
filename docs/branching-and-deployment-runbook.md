@@ -13,7 +13,7 @@
 7. [リリースブランチでのバグ修正 (非 Hot-fix)](#リリースブランチでのバグ修正-非-hot-fix)
 8. [develop ブランチでのバグ修正](#develop-ブランチでのバグ修正)
 9. [GitHub 設定変更を適用する](#github-設定変更を適用する)
-10. [デプロイ・配布と動作確認を省略する](#デプロイ・配布と動作確認を省略する)
+10. [デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)
 
 ---
 
@@ -622,8 +622,7 @@ gitGraph
     checkout fix/fix-minor-issue
     commit id: "fix: minor bug"
     checkout release/v1.2.0
-    merge fix/fix-minor-issue id: "E"
-    commit id: "F" tag: "v1.2.0-rc.3"
+    merge fix/fix-minor-issue id: "E" tag: "v1.2.0-rc.3"
 ```
 
 ---
