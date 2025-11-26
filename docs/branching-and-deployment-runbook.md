@@ -12,7 +12,8 @@
 6. [審査リジェクト対応](#審査リジェクト対応)
 7. [リリース後のバグ修正（非 Hot-fix）](#リリース後のバグ修正非-hot-fix)
 8. [develop ブランチでのバグ修正](#develop-ブランチでのバグ修正)
-9. [デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)
+9. [GitHub 設定変更を適用する](#github-設定変更を適用する)
+10. [デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)
 
 ---
 
@@ -685,6 +686,143 @@ gitGraph
     commit id: "fix: resolve minor issue"
     checkout develop
     merge fix/your-bug-fix-name id: "C (マージ)"
+```
+
+---
+
+## GitHub 設定変更を適用する
+
+> **関連ドキュメント**: [ブランチ戦略 - GitHub 設定変更などの特殊な master PR 運用](./branching-strategy.md#github-設定変更などの特殊な-master-pr-運用)
+
+`.github/CODEOWNERS` や GitHub Actions ワークフローなど、GitHub の挙動を変更する設定ファイルを、バージョン更新なしで master と develop の両方に迅速に適用する手順です。
+
+### 前提条件
+
+- 変更がアプリケーションコードに影響しないこと
+- `.github/` 以下のファイルまたはリポジトリー設定ファイルの変更であること
+
+### 手順
+
+#### Step 1: master ブランチから chore ブランチを作成
+
+```bash
+git fetch origin master
+git checkout -B chore/update-github-settings origin/master
+```
+
+> **注意**: ブランチ名は変更内容に応じて適切に命名してください。例:
+> - `chore/update-codeowners`
+> - `chore/update-workflows`
+> - `chore/update-issue-templates`
+
+#### Step 2: 設定ファイルを変更
+
+```bash
+# 例: CODEOWNERS を編集
+vim .github/CODEOWNERS
+
+# 例: GitHub Actions ワークフローを編集
+vim .github/workflows/ci.yml
+```
+
+#### Step 3: 変更をコミット
+
+```bash
+git add .
+git commit -m "chore: update CODEOWNERS"
+# または
+git commit -m "chore: update GitHub Actions workflow"
+```
+
+> **コミットメッセージのプレフィックス**: `chore:` を使用してください。
+
+#### Step 4: リモートへプッシュ
+
+```bash
+git push origin chore/update-github-settings
+```
+
+#### Step 5: master への PR を作成してマージ
+
+1. GitHub で `master` ブランチに対する PR を作成
+2. レビュアーを設定
+3. レビュー承認後、マージ
+
+> **重要**: バージョンタグは作成しません。設定変更のためタグは不要です。
+
+#### Step 6: develop への PR を作成してマージ
+
+master へのマージ完了後、**同じ chore ブランチ**を develop にもマージします。
+
+1. GitHub で `develop` ブランチに対する PR を作成（ソースブランチ: `chore/update-github-settings`）
+2. レビュアーを設定
+3. レビュー承認後、マージ
+
+> **注意**: develop に master をマージするのではなく、chore ブランチを develop にマージします。これは Hot-fix の運用と同じパターンです。
+
+#### Step 7: chore ブランチの削除（オプション）
+
+```bash
+git branch -d chore/update-github-settings
+git push origin --delete chore/update-github-settings
+```
+
+### コミットグラフ
+
+```mermaid
+gitGraph
+    commit id: "A"
+    branch develop
+    checkout develop
+    commit id: "B"
+    checkout main
+    branch chore/update-github-settings
+    checkout chore/update-github-settings
+    commit id: "chore: update CODEOWNERS"
+    checkout main
+    merge chore/update-github-settings id: "C (master へ反映)"
+    checkout develop
+    merge chore/update-github-settings id: "D (develop へ反映)"
+```
+
+> **注**: 
+> - このフローではバージョンタグを作成しません。GitHub の設定変更のみが目的であり、アプリケーションのリリースは行わないためです。
+> - mermaid gitGraph の制約上、図中のデフォルトブランチは `main` と表示されますが、本ドキュメントでは `master` ブランチを指します。
+
+### 適用例
+
+#### CODEOWNERS の更新
+
+```bash
+git fetch origin master
+git checkout -B chore/update-codeowners origin/master
+
+# .github/CODEOWNERS を編集
+vim .github/CODEOWNERS
+
+git add .github/CODEOWNERS
+git commit -m "chore: update code owners for new team structure"
+git push origin chore/update-codeowners
+
+# master への PR を作成・マージ
+# develop への PR を作成・マージ
+```
+
+#### GitHub Actions ワークフローの更新
+
+```bash
+git fetch origin master
+git checkout -B chore/update-ci-workflow origin/master
+
+# ワークフローファイルを編集
+vim .github/workflows/ci.yml
+
+git add .github/workflows/ci.yml
+git commit -m "chore: update CI workflow to use latest actions"
+git push origin chore/update-ci-workflow
+
+# master への PR を作成・マージ
+# develop への PR を作成・マージ
 ```
 
 ---
