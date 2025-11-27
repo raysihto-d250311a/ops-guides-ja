@@ -771,7 +771,7 @@ git push origin fix/your-bug-fix-name
 
 > [!TIP]
 > このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
->
+
 > [!WARNING]
 > この修正は次回のリリースに含まれます。
 
