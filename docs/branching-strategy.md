@@ -2,7 +2,8 @@
 
 本ドキュメントは、Git-flow に準拠したブランチ戦略を定めたものです。
 
-> **step-by-step 手順については [ブランチ・デプロイ運用手順書](./branching-and-deployment-runbook.md) を参照してください。**
+> [!NOTE]
+> step-by-step 手順については [ブランチ・デプロイ運用手順書](./branching-and-deployment-runbook.md) を参照してください。
 
 ## 目次
 
@@ -71,7 +72,8 @@ vX.Y.Z
 3. `develop` ブランチに対する PR を作成
 4. レビュー承認後、マージ
 
-> **重要**: 機能開発 (`feat:` プレフィックスを持つコミット) は `feature` ブランチで行い、PR を通じて `develop` ブランチにマージする必要があります。`master` や `release` ブランチに直接 feature コミットをプッシュしないでください。
+> [!IMPORTANT]
+> 機能開発 (`feat:` プレフィックスを持つコミット) は `feature` ブランチで行い、PR を通じて `develop` ブランチにマージする必要があります。`master` や `release` ブランチに直接 feature コミットをプッシュしないでください。
 
 📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - 新機能を開発する](./branching-and-deployment-runbook.md#新機能を開発する)
 
@@ -203,7 +205,8 @@ Feature-Freeze 期間中であっても、`develop` ブランチに対して修�
 
 ### 基本原則
 
-> **原則としてすべての変更は PR で管理し、レビューを受けること**
+> [!IMPORTANT]
+> 原則としてすべての変更は PR で管理し、レビューを受けること
 
 ### PR 作成のルール
 
