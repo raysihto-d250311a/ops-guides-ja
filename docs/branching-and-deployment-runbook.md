@@ -35,6 +35,23 @@ git fetch origin develop
 git checkout -B feature/your-feature-name origin/develop
 ```
 
+> ⚠️ **注意: `-B` オプションについて**
+>
+> `git checkout -B` は、ローカルに同名のブランチが存在する場合、そのブランチを**強制的に上書き**します。
+> ローカルにのみ存在する未プッシュのコミットがある場合、それらは失われます。
+>
+> **実行前チェックリスト:**
+> - [ ] `git status` で作業ディレクトリーがクリーンであることを確認
+> - [ ] `git branch` で同名ブランチの有無を確認
+> - [ ] 未プッシュのコミットがないことを確認
+>
+> **代替コマンド (`-b` オプション):**
+> ```bash
+> git checkout -b feature/your-feature-name origin/develop
+> ```
+> `-b` オプションは、同名ブランチが存在する場合にエラーで停止するため、より安全です。
+> ただし、既存ブランチがある場合は手動で削除 (`git branch -d`) するか、上書きを意図して `-B` を使用してください。
+
 #### Step 2: 機能を実装
 
 ```bash
@@ -57,9 +74,13 @@ git push origin feature/your-feature-name
 
 1. GitHub で `develop` ブランチに対する PR を作成
 2. レビュアーを設定
-3. レビュー承認後、マージ
+3. レビュー承認後、**Squash マージ**を実行
+
+> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
 
 ### コミットグラフ
+
+> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `feature` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -70,9 +91,9 @@ gitGraph
     commit id: "B"
     branch feature/your-feature-name
     checkout feature/your-feature-name
-    commit id: "feat: add user feature"
+    commit id: "feat: add user feature (作業コミット)"
     checkout develop
-    merge feature/your-feature-name id: "C (マージ)"
+    merge feature/your-feature-name id: "C (PR経由Squashマージ)"
 ```
 
 ---
@@ -100,6 +121,8 @@ git fetch origin develop
 # 例: v1.2.0 のリリースを準備する場合
 git checkout -B release/v1.2.0 origin/develop
 ```
+
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 3: リモートへプッシュ
 
@@ -149,6 +172,8 @@ git fetch origin release/v1.2.0
 git checkout -B release/v1.2.0 origin/release/v1.2.0
 ```
 
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+
 #### Step 2: RC タグを作成
 
 ```bash
@@ -192,11 +217,13 @@ bundle exec fastlane deploy_internal
 - [ ] パフォーマンスに問題がないこと
 - [ ] エラーログに異常がないこと
 
-> **注意**: 動作確認で問題が見つかった場合は、release ブランチで修正を行い、新しい RC タグを作成して再度 STG にデプロイします。
+> **注意**: 動作確認で問題が見つかった場合は、「[リリースブランチでのバグ修正 (非 Hot-fix)](#リリースブランチでのバグ修正-非-hot-fix)」の手順に従って `fix/*` ブランチで修正を行い、PR を経由して release ブランチに Squash マージした後、新しい RC タグを作成して再度 STG にデプロイします。
 
 ### コミットグラフ
 
-以下は、release ブランチ上で RC タグを作成し、修正後に新しい RC タグを作成するフローの例です。
+以下は、release ブランチ上で RC タグを作成し、`fix` ブランチでの修正を PR 経由で Squash マージした後に新しい RC タグを作成するフローの例です。
+
+> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -209,7 +236,11 @@ gitGraph
     branch release/v1.2.0
     checkout release/v1.2.0
     commit id: "D" tag: "v1.2.0-rc.1"
-    commit id: "fix: 修正" tag: "v1.2.0-rc.2"
+    branch fix/some-bug
+    checkout fix/some-bug
+    commit id: "fix: 修正 (作業コミット)"
+    checkout release/v1.2.0
+    merge fix/some-bug id: "E (PR経由Squashマージ)" tag: "v1.2.0-rc.2"
 ```
 
 ---
@@ -237,6 +268,8 @@ gitGraph
 git fetch origin master
 git checkout -B master origin/master
 ```
+
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 3: master 上で RC タグを作成して STG で最終確認
 
@@ -309,7 +342,9 @@ git push origin --delete release/v1.2.0
 
 ### コミットグラフ
 
-以下は、release ブランチで複数回の修正と RC タグ作成を経て、master へマージし本番リリースする完全なフローの例です。
+以下は、release ブランチで `fix` ブランチからの PR 経由 Squash マージによる修正と RC タグ作成を経て、master へマージし本番リリースする完全なフローの例です。
+
+> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -322,15 +357,20 @@ gitGraph
     branch release/v1.2.0
     checkout release/v1.2.0
     commit id: "D" tag: "v1.2.0-rc.1"
-    commit id: "fix: 修正" tag: "v1.2.0-rc.2"
+    branch fix/some-bug
+    checkout fix/some-bug
+    commit id: "fix: 修正 (作業コミット)"
+    checkout release/v1.2.0
+    merge fix/some-bug id: "E (PR経由Squashマージ)" tag: "v1.2.0-rc.2"
     checkout master
-    merge release/v1.2.0 id: "E" tag: "v1.2.0-rc.3" tag: "v1.2.0"
+    merge release/v1.2.0 id: "F" tag: "v1.2.0-rc.3" tag: "v1.2.0"
     checkout develop
-    merge release/v1.2.0 id: "F (develop へ反映)"
+    merge release/v1.2.0 id: "G (develop へ反映)"
 ```
 
 > **注**: 
-> - 上記の例では、release ブランチ上で RC タグ (rc.1、rc.2) が作成され、その後 master へマージされています。マージコミット E には RC タグ `v1.2.0-rc.3` と正式タグ `v1.2.0` の両方が付与されます (同一コミット)。
+> - 上記の例では、release ブランチ上で RC タグ (rc.1、rc.2) が作成され、その後 master へマージされています。マージコミット F には RC タグ `v1.2.0-rc.3` と正式タグ `v1.2.0` の両方が付与されます (同一コミット)。
+> - `fix/some-bug` ブランチは PR を経由して release ブランチに Squash マージされています。
 
 ---
 
@@ -351,6 +391,8 @@ gitGraph
 git fetch origin master
 git checkout -B hotfix/fix-critical-issue origin/master
 ```
+
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 2: 修正を実施
 
@@ -387,6 +429,8 @@ git checkout -B master origin/master
 git tag v1.2.1-rc.2  # hotfix での最後の RC からインクリメント
 git push origin v1.2.1-rc.2
 ```
+
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 7: 本番リリースタグを作成
 
@@ -454,6 +498,8 @@ git fetch origin master
 git checkout -B hotfix/fix-review-rejection origin/master
 ```
 
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+
 修正を実施します：
 
 ```bash
@@ -491,6 +537,8 @@ git checkout -B master origin/master
 git tag v1.2.0-rc.4
 git push origin v1.2.0-rc.4
 ```
+
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 6: STG 環境で動作確認 (省略可能)
 
@@ -574,6 +622,8 @@ git fetch origin release/v1.2.0
 git checkout -B fix/fix-minor-issue origin/release/v1.2.0
 ```
 
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+
 #### Step 2: 修正を実施
 
 ```bash
@@ -590,7 +640,9 @@ git push origin fix/fix-minor-issue
 #### Step 4: release ブランチに対する PR を作成
 
 1. GitHub で `release/v1.2.0` ブランチに対する PR を作成
-2. レビュー承認後、マージ
+2. レビュー承認後、**Squash マージ**を実行
+
+> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
 
 #### Step 5: 新しい RC タグを作成
 
@@ -601,11 +653,15 @@ git tag v1.2.0-rc.3  # 前回の RC からインクリメント
 git push origin v1.2.0-rc.3
 ```
 
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+
 #### Step 6: STG で動作確認後、本番リリースへ
 
 「本番リリースを実施する」の手順に従ってリリースを完了します。
 
 ### コミットグラフ
+
+> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -620,9 +676,9 @@ gitGraph
     commit id: "D" tag: "v1.2.0-rc.2"
     branch fix/fix-minor-issue
     checkout fix/fix-minor-issue
-    commit id: "fix: minor bug"
+    commit id: "fix: minor bug (作業コミット)"
     checkout release/v1.2.0
-    merge fix/fix-minor-issue id: "E" tag: "v1.2.0-rc.3"
+    merge fix/fix-minor-issue id: "E (PR経由Squashマージ)" tag: "v1.2.0-rc.3"
 ```
 
 ---
@@ -649,6 +705,8 @@ git checkout -B fix/your-bug-fix-name origin/develop
 git checkout -B chore/your-chore-name origin/develop
 ```
 
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+
 #### Step 2: 修正を実施
 
 ```bash
@@ -671,11 +729,15 @@ git push origin fix/your-bug-fix-name
 
 1. GitHub で `develop` ブランチに対する PR を作成
 2. レビュアーを設定
-3. レビュー承認後、マージ
+3. レビュー承認後、**Squash マージ**を実行
 
+> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
+>
 > **注意**: この修正は次回のリリースに含まれます。
 
 ### コミットグラフ
+
+> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -686,9 +748,9 @@ gitGraph
     commit id: "B"
     branch fix/your-bug-fix-name
     checkout fix/your-bug-fix-name
-    commit id: "fix: resolve minor issue"
+    commit id: "fix: resolve minor issue (作業コミット)"
     checkout develop
-    merge fix/your-bug-fix-name id: "C (マージ)"
+    merge fix/your-bug-fix-name id: "C (PR経由Squashマージ)"
 ```
 
 ---
@@ -712,6 +774,8 @@ gitGraph
 git fetch origin master
 git checkout -B chore/update-github-settings origin/master
 ```
+
+> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 > **注意**: ブランチ名は変更内容に応じて適切に命名してください。例:
 > - `chore/update-codeowners`
