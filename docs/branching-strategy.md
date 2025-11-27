@@ -151,6 +151,10 @@ Feature-Freeze 期間中であっても、`develop` ブランチに対して修�
 
 📘 **手順の詳細**: [ブランチ・デプロイ運用手順書 - develop ブランチでのバグ修正](./branching-and-deployment-runbook.md#develop-ブランチでのバグ修正)
 
+#### Feature-Freeze 中ではない場合
+
+Feature-Freeze 中ではない場合 (つまり `release/vX.Y.Z` ブランチが存在しない場合) は、すべての非 Hot-fix 修正は `develop` ブランチに対する PR として作成します。手順は上記「現在の release ブランチに関係しない修正の場合」と同様です。
+
 ---
 
 ## GitHub 設定変更などの特殊な master PR 運用
