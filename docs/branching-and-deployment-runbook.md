@@ -19,6 +19,7 @@
 
 ## 新機能を開発する
 
+> [!NOTE]
 > **関連ドキュメント**: [ブランチ戦略 - 機能開発フロー](./branching-strategy.md#機能開発フロー)
 
 ### 前提条件
@@ -35,7 +36,8 @@ git fetch origin develop
 git checkout -B feature/your-feature-name origin/develop
 ```
 
-> ⚠️ **注意: `-B` オプションについて**
+> [!WARNING]
+> **`-B` オプションについて**
 >
 > `git checkout -B` は、ローカルに同名のブランチが存在する場合、そのブランチを**強制的に上書き**します。
 > ローカルにのみ存在する未プッシュのコミットがある場合、それらは失われます。
@@ -62,7 +64,8 @@ git add .
 git commit -m "feat: add user feature"
 ```
 
-> **注意**: `feat:` プレフィックスを持つコミットは `feature` ブランチで行い、`develop` にマージしてください。
+> [!WARNING]
+> `feat:` プレフィックスを持つコミットは `feature` ブランチで行い、`develop` にマージしてください。
 
 #### Step 3: リモートへプッシュ
 
@@ -76,11 +79,13 @@ git push origin feature/your-feature-name
 2. レビュアーを設定
 3. レビュー承認後、**Squash マージ**を実行
 
-> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
+> [!TIP]
+> このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
 
 ### コミットグラフ
 
-> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `feature` ブランチの複数コミットが単一コミットとして表現されています。
+> [!TIP]
+> このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `feature` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -100,6 +105,7 @@ gitGraph
 
 ## リリースブランチを作成する
 
+> [!NOTE]
 > **関連ドキュメント**: [ブランチ戦略 - リリースブランチの運用](./branching-strategy.md#リリースブランチの運用)
 
 ### 前提条件
@@ -122,7 +128,8 @@ git fetch origin develop
 git checkout -B release/v1.2.0 origin/develop
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 3: リモートへプッシュ
 
@@ -154,6 +161,7 @@ gitGraph
 
 ## RC タグを作成して STG にデプロイする
 
+> [!NOTE]
 > **関連ドキュメント**: [デプロイ戦略 - RC タグの作成場所](./deployment-strategy.md#rc-タグの作成場所)
 
 RC タグはリリースプロセスにおいて複数回作成されます。ここでは release ブランチ上での RC タグ作成手順を説明します。
@@ -172,7 +180,8 @@ git fetch origin release/v1.2.0
 git checkout -B release/v1.2.0 origin/release/v1.2.0
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 2: RC タグを作成
 
@@ -217,13 +226,15 @@ bundle exec fastlane deploy_internal
 - [ ] パフォーマンスに問題がないこと
 - [ ] エラーログに異常がないこと
 
-> **注意**: 動作確認で問題が見つかった場合は、「[リリースブランチでのバグ修正 (非 Hot-fix)](#リリースブランチでのバグ修正-非-hot-fix)」の手順に従って `fix/*` ブランチで修正を行い、PR を経由して release ブランチに Squash マージした後、新しい RC タグを作成して再度 STG にデプロイします。
+> [!WARNING]
+> 動作確認で問題が見つかった場合は、「[リリースブランチでのバグ修正 (非 Hot-fix)](#リリースブランチでのバグ修正-非-hot-fix)」の手順に従って `fix/*` ブランチで修正を行い、PR を経由して release ブランチに Squash マージした後、新しい RC タグを作成して再度 STG にデプロイします。
 
 ### コミットグラフ
 
 以下は、release ブランチ上で RC タグを作成し、`fix` ブランチでの修正を PR 経由で Squash マージした後に新しい RC タグを作成するフローの例です。
 
-> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
+> [!TIP]
+> このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -247,6 +258,7 @@ gitGraph
 
 ## 本番リリースを実施する
 
+> [!NOTE]
 > **関連ドキュメント**: [デプロイ戦略 - ブランチ・タグと環境の対応](./deployment-strategy.md#ブランチタグと環境の対応)
 
 ### 前提条件
@@ -269,7 +281,8 @@ git fetch origin master
 git checkout -B master origin/master
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 3: master 上で RC タグを作成して STG で最終確認
 
@@ -294,11 +307,13 @@ bundle exec fastlane deploy_internal
 - [ ] 既存機能にデグレードがないこと
 - [ ] モバイルアプリの場合、審査にパスしていること
 
+> [!WARNING]
 > **動作確認 NG の場合**: master から `hotfix/*` ブランチを分岐し、修正を行います。修正完了後に `hotfix/*` 上で RC タグを作成して動作確認し、問題がなければ master にマージして新しい RC タグを作成します。
 
 #### Step 5: 本番リリースタグを作成
 
-> **重要**: 審査にパスした RC タグと同じコミットに対して正式タグを作成します。正式タグのビルドは審査に再提出しません。
+> [!IMPORTANT]
+> 審査にパスした RC タグと同じコミットに対して正式タグを作成します。正式タグのビルドは審査に再提出しません。
 
 ```bash
 git tag v1.2.0
@@ -316,7 +331,8 @@ git push origin v1.2.0
 
 **モバイルアプリの場合:**
 
-> **注意**: モバイルアプリでは、審査にパスした RC タグのビルドがそのままストアリリースされます。正式タグ `vX.Y.Z` から新たにビルドを作成して審査に再提出することはありません。
+> [!WARNING]
+> モバイルアプリでは、審査にパスした RC タグのビルドがそのままストアリリースされます。正式タグ `vX.Y.Z` から新たにビルドを作成して審査に再提出することはありません。
 
 ```bash
 # ストアへのリリース (審査パス済みのビルドをリリース)
@@ -331,7 +347,8 @@ release ブランチを develop にマージするための PR を作成しま�
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
-> **注意**: develop に master をマージするのではなく、release ブランチを develop にマージします。
+> [!WARNING]
+> develop に master をマージするのではなく、release ブランチを develop にマージします。
 
 #### Step 8: リリースブランチの削除 (オプション)
 
@@ -344,7 +361,8 @@ git push origin --delete release/v1.2.0
 
 以下は、release ブランチで `fix` ブランチからの PR 経由 Squash マージによる修正と RC タグ作成を経て、master へマージし本番リリースする完全なフローの例です。
 
-> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
+> [!TIP]
+> このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -368,7 +386,7 @@ gitGraph
     merge release/v1.2.0 id: "G (develop へ反映)"
 ```
 
-> **注**: 
+> [!NOTE]
 > - 上記の例では、release ブランチ上で RC タグ (rc.1、rc.2) が作成され、その後 master へマージされています。マージコミット F には RC タグ `v1.2.0-rc.3` と正式タグ `v1.2.0` の両方が付与されます (同一コミット)。
 > - `fix/some-bug` ブランチは PR を経由して release ブランチに Squash マージされています。
 
@@ -376,6 +394,7 @@ gitGraph
 
 ## Hot-fix を適用する
 
+> [!NOTE]
 > **関連ドキュメント**: [ブランチ戦略 - Hot-fix の運用](./branching-strategy.md#hot-fix-の運用)
 
 ### 前提条件
@@ -392,7 +411,8 @@ git fetch origin master
 git checkout -B hotfix/fix-critical-issue origin/master
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 2: 修正を実施
 
@@ -414,6 +434,7 @@ git push origin v1.2.1-rc.1
 - [ ] 修正が正しく適用されていること
 - [ ] 他の機能に影響がないこと
 
+> [!WARNING]
 > **動作確認 NG の場合**: hotfix ブランチで追加の修正を行い、新しい RC タグを作成して再度確認します。
 
 #### Step 5: master への PR を作成してマージ
@@ -430,7 +451,8 @@ git tag v1.2.1-rc.2  # hotfix での最後の RC からインクリメント
 git push origin v1.2.1-rc.2
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 7: 本番リリースタグを作成
 
@@ -453,7 +475,8 @@ hotfix ブランチを develop にマージするための PR を作成します
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
-> **注意**: develop に master をマージするのではなく、hotfix ブランチを develop にマージします。
+> [!WARNING]
+> develop に master をマージするのではなく、hotfix ブランチを develop にマージします。
 
 ### コミットグラフ
 
@@ -478,6 +501,7 @@ gitGraph
 
 ## 審査リジェクト対応
 
+> [!NOTE]
 > **関連ドキュメント**: [デプロイ戦略 - 審査対応](./deployment-strategy.md#審査対応)
 
 ### 前提条件
@@ -498,7 +522,8 @@ git fetch origin master
 git checkout -B hotfix/fix-review-rejection origin/master
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 修正を実施します：
 
@@ -520,6 +545,7 @@ STG 環境にデプロイ・配布して動作確認を行います。
 - [ ] 修正が正しく適用されていること
 - [ ] 他の機能に影響がないこと
 
+> [!WARNING]
 > **動作確認 NG の場合**: hotfix ブランチで追加の修正を行い、新しい RC タグを作成して再度確認します。
 
 #### Step 4: master への PR を作成してマージ
@@ -529,7 +555,8 @@ STG 環境にデプロイ・配布して動作確認を行います。
 
 #### Step 5: master 上で新しい RC タグを作成
 
-> **重要**: 審査に提出するのは常に `master` ブランチ上の RC タグ (`vX.Y.Z-rc.N`) からビルドしたアプリです。
+> [!IMPORTANT]
+> 審査に提出するのは常に `master` ブランチ上の RC タグ (`vX.Y.Z-rc.N`) からビルドしたアプリです。
 
 ```bash
 git fetch origin master
@@ -538,11 +565,13 @@ git tag v1.2.0-rc.4
 git push origin v1.2.0-rc.4
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 6: STG 環境で動作確認 (省略可能)
 
-> **注意**: hotfix ブランチ上の RC タグ (`v1.2.0-rc.3`) と master 上の RC タグ (`v1.2.0-rc.4`) のソースコードに差分がない場合、STG でのデプロイ・配布と動作確認は省略できます。詳細は「[デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)」を参照してください。
+> [!WARNING]
+> hotfix ブランチ上の RC タグ (`v1.2.0-rc.3`) と master 上の RC タグ (`v1.2.0-rc.4`) のソースコードに差分がない場合、STG でのデプロイ・配布と動作確認は省略できます。詳細は「[デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)」を参照してください。
 
 ```bash
 bundle exec fastlane beta  # iOS の場合
@@ -550,7 +579,8 @@ bundle exec fastlane beta  # iOS の場合
 
 #### Step 7: 審査再提出
 
-> **注意**: 再提出するのは新しい RC タグ (`v1.2.0-rc.4`) のビルドです。
+> [!WARNING]
+> 再提出するのは新しい RC タグ (`v1.2.0-rc.4`) のビルドです。
 
 ```bash
 bundle exec fastlane release_to_review
@@ -573,7 +603,8 @@ hotfix ブランチを develop にマージするための PR を作成します
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
-> **注意**: develop に master をマージするのではなく、hotfix ブランチを develop にマージします。
+> [!WARNING]
+> develop に master をマージするのではなく、hotfix ブランチを develop にマージします。
 
 ### コミットグラフ
 
@@ -598,7 +629,7 @@ gitGraph
     merge hotfix/fix-review-rejection id: "F (develop へ反映)"
 ```
 
-> **注**: 
+> [!NOTE]
 > - 審査リジェクト対応では、`hotfix/*` ブランチで修正を行い、RC タグ (`v1.2.0-rc.3`) を作成して STG で動作確認を行います。その後 master にマージし、新しい RC タグ (`v1.2.0-rc.4`) を作成します。
 > - 多くの場合、hotfix ブランチ上の RC タグと master マージ後の RC タグはソースコードに差分がないため、二度目の STG デプロイ・配布は省略できます。詳細は「[デプロイ・配布と動作確認を省略する](#デプロイ配布と動作確認を省略する)」を参照してください。
 
@@ -606,6 +637,7 @@ gitGraph
 
 ## リリースブランチでのバグ修正 (非 Hot-fix)
 
+> [!NOTE]
 > **関連ドキュメント**: [ブランチ戦略 - 非 Hot-fix 修正の運用](./branching-strategy.md#非-hot-fix-修正の運用)
 
 ### 前提条件
@@ -622,7 +654,8 @@ git fetch origin release/v1.2.0
 git checkout -B fix/fix-minor-issue origin/release/v1.2.0
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 2: 修正を実施
 
@@ -642,7 +675,8 @@ git push origin fix/fix-minor-issue
 1. GitHub で `release/v1.2.0` ブランチに対する PR を作成
 2. レビュー承認後、**Squash マージ**を実行
 
-> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
+> [!TIP]
+> このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
 
 #### Step 5: 新しい RC タグを作成
 
@@ -653,7 +687,8 @@ git tag v1.2.0-rc.3  # 前回の RC からインクリメント
 git push origin v1.2.0-rc.3
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 6: STG で動作確認後、本番リリースへ
 
@@ -661,7 +696,8 @@ git push origin v1.2.0-rc.3
 
 ### コミットグラフ
 
-> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
+> [!TIP]
+> このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -685,6 +721,7 @@ gitGraph
 
 ## develop ブランチでのバグ修正
 
+> [!NOTE]
 > **関連ドキュメント**: [ブランチ戦略 - 非 Hot-fix 修正の運用](./branching-strategy.md#非-hot-fix-修正の運用)
 
 現在の release ブランチに関係しない、緊急性のないバグ修正や改善を行う場合の手順です。Feature-Freeze 期間中であっても、この手順で対応します。
@@ -705,7 +742,8 @@ git checkout -B fix/your-bug-fix-name origin/develop
 git checkout -B chore/your-chore-name origin/develop
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
 #### Step 2: 修正を実施
 
@@ -731,13 +769,16 @@ git push origin fix/your-bug-fix-name
 2. レビュアーを設定
 3. レビュー承認後、**Squash マージ**を実行
 
-> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
->
-> **注意**: この修正は次回のリリースに含まれます。
+> [!TIP]
+> このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。
+
+> [!WARNING]
+> この修正は次回のリリースに含まれます。
 
 ### コミットグラフ
 
-> **ポイント**: このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
+> [!TIP]
+> このリポジトリーでは、`develop`/`release` ブランチへの `feature`/`fix` ブランチのマージ時には **Squash マージ**を行うポリシーに従っています。そのため、コミットグラフ上では `fix` ブランチの複数コミットが単一コミットとして表現されています。
 
 ```mermaid
 %%{init: {'gitGraph': {'mainBranchName': 'master'}} }%%
@@ -757,6 +798,7 @@ gitGraph
 
 ## GitHub 設定変更を適用する
 
+> [!NOTE]
 > **関連ドキュメント**: [ブランチ戦略 - GitHub 設定変更などの特殊な master PR 運用](./branching-strategy.md#github-設定変更などの特殊な-master-pr-運用)
 
 `.github/CODEOWNERS` や GitHub Actions ワークフローなど、GitHub の挙動を変更する設定ファイルを、バージョン更新なしで master と develop の両方に迅速に適用する手順です。
@@ -775,9 +817,11 @@ git fetch origin master
 git checkout -B chore/update-github-settings origin/master
 ```
 
-> ⚠️ **注意**: `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
+> [!WARNING]
+> `-B` オプションはローカルブランチを強制上書きします。詳細は「[新機能を開発する - Step 1](#step-1-feature-ブランチを作成)」の注意書きを参照してください。
 
-> **注意**: ブランチ名は変更内容に応じて適切に命名してください。例:
+> [!WARNING]
+> ブランチ名は変更内容に応じて適切に命名してください。例:
 > - `chore/update-codeowners`
 > - `chore/update-workflows`
 > - `chore/update-issue-templates`
@@ -801,6 +845,7 @@ git commit -m "chore: update CODEOWNERS"
 git commit -m "chore: update GitHub Actions workflow"
 ```
 
+> [!NOTE]
 > **コミットメッセージのプレフィックス**: `chore:` を使用してください。
 
 #### Step 4: リモートへプッシュ
@@ -815,7 +860,8 @@ git push origin chore/update-github-settings
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
-> **重要**: バージョンタグは作成しません。設定変更のためタグは不要です。
+> [!IMPORTANT]
+> バージョンタグは作成しません。設定変更のためタグは不要です。
 
 #### Step 6: develop への PR を作成してマージ
 
@@ -825,7 +871,8 @@ master へのマージ完了後、**同じ chore ブランチ**を develop に�
 2. レビュアーを設定
 3. レビュー承認後、マージ
 
-> **注意**: develop に master をマージするのではなく、chore ブランチを develop にマージします。これは Hot-fix の運用と同じパターンです。
+> [!WARNING]
+> develop に master をマージするのではなく、chore ブランチを develop にマージします。これは Hot-fix の運用と同じパターンです。
 
 #### Step 7: chore ブランチの削除 (オプション)
 
@@ -853,8 +900,8 @@ gitGraph
     merge chore/update-github-settings id: "D (develop へ反映)"
 ```
 
-> **注**: 
-> - このフローではバージョンタグを作成しません。GitHub の設定変更のみが目的であり、アプリケーションのリリースは行わないためです。
+> [!NOTE]
+> このフローではバージョンタグを作成しません。GitHub の設定変更のみが目的であり、アプリケーションのリリースは行わないためです。
 
 ### 適用例
 
@@ -896,6 +943,7 @@ git push origin chore/update-ci-workflow
 
 ## デプロイ・配布と動作確認を省略する
 
+> [!NOTE]
 > **関連ドキュメント**: [デプロイ戦略 - デプロイ・配布と動作確認の省略](./deployment-strategy.md#デプロイ配布と動作確認の省略)
 
 新たにデプロイ・配布を行い STG で動作確認を実施しようとする際、直前にデプロイ・配布したタグとソースコードが完全に一致する場合は、デプロイ・配布および動作確認を省略できます。同じソースコードに対して同じ確認を行っても、同じ結果しか得られず時間の無駄となるためです。
@@ -922,6 +970,7 @@ git push origin chore/update-ci-workflow
 git diff v1.2.0-rc.1 v1.2.0-rc.2
 ```
 
+> [!NOTE]
 > **判断基準**: 上記コマンドを実行して何も出力されなければ、ソースコードは完全一致しています。差分がある場合は変更内容が表示されます。
 
 #### Step 2: 差分がない場合、デプロイ・配布と動作確認を省略
@@ -931,7 +980,8 @@ git diff v1.2.0-rc.1 v1.2.0-rc.2
 - STG 環境へのデプロイ・配布
 - STG 環境での動作確認
 
-> **注意**: 省略する場合でも、タグの作成とプッシュは必要です。タグはリリース管理のために作成しますが、同一のソースコードに対する重複した動作確認は省略できます。
+> [!WARNING]
+> 省略する場合でも、タグの作成とプッシュは必要です。タグはリリース管理のために作成しますが、同一のソースコードに対する重複した動作確認は省略できます。
 
 #### Step 3: 次のステップへ進む
 
@@ -963,7 +1013,8 @@ gitGraph
     merge release/v1.2.0 id: "D (マージ)" tag: "v1.2.0-rc.2 (省略可)"
 ```
 
-> **ポイント**: 
+> [!TIP]
+> 
 > - `v1.2.0-rc.1` と `v1.2.0-rc.2` はソースコードが同一のため、`v1.2.0-rc.2` のデプロイ・配布と動作確認は省略できます。
 
 ---
