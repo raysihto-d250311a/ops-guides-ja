@@ -96,6 +96,10 @@ vX.Y.Z
 | master での動作確認 NG 時 | `hotfix/*` | master から hotfix/* ブランチを分岐し、修正が落ち着いた段階で RC タグを打って STG にデプロイ |
 | hotfix マージ時 | `master` | hotfix を master に PR 経由でマージした後、master 上で RC タグを打って STG にデプロイ |
 
+### Feature-Freeze 中ではない場合
+
+Feature-Freeze 中ではない場合 (つまり `release/vX.Y.Z` ブランチが存在しない場合)、**STG 環境向けのデプロイは発生しません**。STG 環境へのデプロイは、リリース準備が開始されてから (Feature-Freeze 開始後) 行われます。
+
 ### 原則
 
 - RC タグはリリース前の動作確認・審査提出を目的として作成します
